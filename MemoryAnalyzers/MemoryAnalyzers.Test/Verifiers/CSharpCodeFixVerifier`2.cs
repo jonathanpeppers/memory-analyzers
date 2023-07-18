@@ -33,6 +33,9 @@ namespace MemoryAnalyzers.Test
 				TestCode = source,
 			};
 
+			// Global usings
+			test.TestState.Sources.Add("global using System;");
+
 			test.ExpectedDiagnostics.AddRange(expected);
 			await test.RunAsync(CancellationToken.None);
 		}

@@ -60,14 +60,11 @@ namespace MemoryAnalyzers.Test
 		public async Task EventHandler()
 		{
 			var test = """
-                using System;
+                namespace ConsoleApplication1;
 
-                namespace ConsoleApplication1
-                {
-                    class Foo
-                    {   
-                        public event EventHandler {|#0:EventName|};
-                    }
+                class Foo
+                {   
+                    public event EventHandler {|#0:EventName|};
                 }
             """;
 

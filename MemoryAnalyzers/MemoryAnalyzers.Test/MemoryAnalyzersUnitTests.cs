@@ -9,18 +9,16 @@ namespace MemoryAnalyzers.Test
 	[TestClass]
 	public class MemoryAnalyzersUnitTest
 	{
-		//No diagnostics expected to show up
 		[TestMethod]
-		public async Task TestMethod1()
+		public async Task NoSource()
 		{
-			var test = @"";
-
-			await VerifyCS.VerifyAnalyzerAsync(test);
+			await VerifyCS.VerifyAnalyzerAsync("");
 		}
 
 		//Diagnostic and CodeFix both triggered and checked for
 		[TestMethod]
-		public async Task TestMethod2()
+        [Ignore("Code fix not implemented yet")]
+		public async Task CodeFix()
 		{
 			var test = @"
     using System;
@@ -70,6 +68,23 @@ namespace MemoryAnalyzers.Test
 
             var expected = VerifyCS.Diagnostic("MemoryAnalyzers").WithLocation(0).WithArguments("EventName");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+		}
+
+		[TestMethod]
+		public async Task SafeEventHandler()
+		{
+			var test = """
+                namespace ConsoleApplication1;
+
+                class Foo
+                {
+                    [SafeEvent("Event tested via MemoryTests.MyEvent")]
+                    public event EventHandler {|#0:EventName|};
+                }
+            """;
+
+			// 0 warnings
+			await VerifyCS.VerifyAnalyzerAsync(test);
 		}
 	}
 }

@@ -36,6 +36,20 @@ namespace MemoryAnalyzers.Test
 			// Global usings
 			test.TestState.Sources.Add("global using System;");
 
+			// [SafeEvent] attribute
+			test.TestState.Sources.Add("""
+				[AttributeUsage(AttributeTargets.Event)]
+				sealed class SafeEventAttribute : Attribute
+				{
+					public SafeEventAttribute(string justification)
+					{
+						Justification = justification;
+					}
+
+					public string Justification { get; private set; }
+				}
+			""");
+
 			test.ExpectedDiagnostics.AddRange(expected);
 			await test.RunAsync(CancellationToken.None);
 		}

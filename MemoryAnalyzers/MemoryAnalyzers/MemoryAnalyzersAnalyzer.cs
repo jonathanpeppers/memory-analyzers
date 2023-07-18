@@ -40,6 +40,13 @@ namespace MemoryAnalyzers
 		{
 			var symbol = context.Symbol;
 
+			foreach (var attribute in symbol.GetAttributes())
+			{
+				// If we are marked with [SafeEvent] return
+				if (attribute.AttributeClass.Name == "SafeEventAttribute")
+					return;
+			}
+
 			var diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], symbol.Name);
 			context.ReportDiagnostic(diagnostic);
 		}

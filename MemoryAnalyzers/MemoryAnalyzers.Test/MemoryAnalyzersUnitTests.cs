@@ -55,5 +55,24 @@ namespace MemoryAnalyzers.Test
 			var expected = VerifyCS.Diagnostic("MemoryAnalyzers").WithLocation(0).WithArguments("TypeName");
 			await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
 		}
+
+		[TestMethod]
+		public async Task EventHandler()
+		{
+			var test = """
+                using System;
+
+                namespace ConsoleApplication1
+                {
+                    class Foo
+                    {   
+                        public event EventHandler {|#0:EventName|};
+                    }
+                }
+            """;
+
+            var expected = VerifyCS.Diagnostic("MemoryAnalyzers").WithLocation(0).WithArguments("EventName");
+			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+		}
 	}
 }

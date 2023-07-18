@@ -33,22 +33,15 @@ namespace MemoryAnalyzers
 
 			// TODO: Consider registering other actions that act on syntax instead of or in addition to symbols
 			// See https://github.com/dotnet/roslyn/blob/main/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
-			context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.NamedType);
+			context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Event);
 		}
 
 		private static void AnalyzeSymbol(SymbolAnalysisContext context)
 		{
-			// TODO: Replace the following code with your own analysis, generating Diagnostic objects for any issues you find
-			var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
+			var symbol = context.Symbol;
 
-			// Find just those named type symbols with names containing lowercase letters.
-			if (namedTypeSymbol.Name.ToCharArray().Any(char.IsLower))
-			{
-				// For all such symbols, produce a diagnostic.
-				var diagnostic = Diagnostic.Create(Rule, namedTypeSymbol.Locations[0], namedTypeSymbol.Name);
-
-				context.ReportDiagnostic(diagnostic);
-			}
+			var diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], symbol.Name);
+			context.ReportDiagnostic(diagnostic);
 		}
 	}
 }

@@ -1,5 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VerifyCS = MemoryAnalyzers.Test.CSharpCodeFixVerifier<
 	MemoryAnalyzers.MemoryAnalyzer,
 	MemoryAnalyzers.MemoryAnalyzersCodeFixProvider>;
@@ -17,7 +17,7 @@ namespace MemoryAnalyzers.Test
 
 		//Diagnostic and CodeFix both triggered and checked for
 		[TestMethod]
-        [Ignore("Code fix not implemented yet")]
+		[Ignore("Code fix not implemented yet")]
 		public async Task CodeFix()
 		{
 			var test = @"
@@ -66,7 +66,7 @@ namespace MemoryAnalyzers.Test
                 }
             """;
 
-            var expected = VerifyCS.Diagnostic("MemoryAnalyzers").WithLocation(0).WithArguments("EventName");
+			var expected = VerifyCS.Diagnostic("MemoryAnalyzers").WithLocation(0).WithArguments("EventName");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
 		}
 

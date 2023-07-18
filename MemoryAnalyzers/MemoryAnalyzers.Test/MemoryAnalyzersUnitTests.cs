@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 using VerifyCS = MemoryAnalyzers.Test.CSharpCodeFixVerifier<
-	MemoryAnalyzers.MemoryAnalyzersAnalyzer,
+	MemoryAnalyzers.MemoryAnalyzer,
 	MemoryAnalyzers.MemoryAnalyzersCodeFixProvider>;
 
 namespace MemoryAnalyzers.Test

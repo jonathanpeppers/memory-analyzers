@@ -1,17 +1,11 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Threading;
 
 namespace MemoryAnalyzers
 {
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
-	public class MemoryAnalyzersAnalyzer : DiagnosticAnalyzer
+	public class MemoryAnalyzer : DiagnosticAnalyzer
 	{
 		public const string DiagnosticId = "MemoryAnalyzers";
 

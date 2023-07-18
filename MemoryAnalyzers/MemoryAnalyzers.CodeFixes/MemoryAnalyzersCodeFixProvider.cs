@@ -20,7 +20,7 @@ namespace MemoryAnalyzers
 	{
 		public sealed override ImmutableArray<string> FixableDiagnosticIds
 		{
-			get { return ImmutableArray.Create(MemoryAnalyzersAnalyzer.DiagnosticId); }
+			get { return ImmutableArray.Create(MemoryAnalyzer.DiagnosticId); }
 		}
 
 		public sealed override FixAllProvider GetFixAllProvider()

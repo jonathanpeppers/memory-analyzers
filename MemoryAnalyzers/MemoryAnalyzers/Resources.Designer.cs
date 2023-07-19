@@ -61,7 +61,7 @@ namespace MemoryAnalyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to C# events can cause memory leaks.
+        ///   Looks up a localized string similar to C# events can cause memory leaks..
         /// </summary>
         internal static string AnalyzerDescription {
             get {

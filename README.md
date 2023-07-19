@@ -1,2 +1,3 @@
 # memory-analyzers
- C# code analyzers for finding memory leaks
+
+A set of Roslyn C# code analyzers for finding memory leaks

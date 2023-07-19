@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryAnalyzers.Package", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryAnalyzers.Test", "MemoryAnalyzers\MemoryAnalyzers.Test\MemoryAnalyzers.Test.csproj", "{2FB88150-84A0-463C-A067-DED2B7545921}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryAnalyzers.Attributes", "MemoryAnalyzers.Attributes\MemoryAnalyzers.Attributes.csproj", "{99FF3A89-C5FE-48A9-979F-D47584573F1F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryAnalyzers.Attributes", "MemoryAnalyzers\MemoryAnalyzers.Attributes\MemoryAnalyzers.Attributes.csproj", "{99FF3A89-C5FE-48A9-979F-D47584573F1F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\MemoryAnalyzers.Attributes\MemoryAnalyzers.Attributes.csproj" />
+    <ProjectReference Include="..\MemoryAnalyzers.Attributes\MemoryAnalyzers.Attributes.csproj" />
     <ProjectReference Include="..\MemoryAnalyzers.CodeFixes\MemoryAnalyzers.CodeFixes.csproj" />
     <ProjectReference Include="..\MemoryAnalyzers\MemoryAnalyzers.csproj" />
   </ItemGroup>

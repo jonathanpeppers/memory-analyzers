@@ -50,7 +50,7 @@ namespace MemoryAnalyzers.Test
         }
     }";
 
-			var expected = VerifyCS.Diagnostic("MemoryAnalyzers").WithLocation(0).WithArguments("TypeName");
+			var expected = VerifyCS.Diagnostic("MA0001").WithLocation(0).WithArguments("TypeName");
 			await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
 		}
 
@@ -66,7 +66,7 @@ namespace MemoryAnalyzers.Test
                 }
             """;
 
-			var expected = VerifyCS.Diagnostic("MemoryAnalyzers").WithLocation(0).WithArguments("EventName");
+			var expected = VerifyCS.Diagnostic("MA0001").WithLocation(0).WithArguments("EventName");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
 		}
 

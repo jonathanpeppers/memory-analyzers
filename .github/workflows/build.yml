@@ -1,0 +1,27 @@
+name: build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: install .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+    - name: build
+      run: dotnet build -bl:bin/build.binlog
+    - name: test
+      run: dotnet test --no-build --verbosity normal
+    - name: artifacts
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: artifacts
+        path: bin

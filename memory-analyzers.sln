@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryAnalyzers.Package", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryAnalyzers.Test", "MemoryAnalyzers\MemoryAnalyzers.Test\MemoryAnalyzers.Test.csproj", "{2FB88150-84A0-463C-A067-DED2B7545921}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryAnalyzers.Vsix", "MemoryAnalyzers\MemoryAnalyzers.Vsix\MemoryAnalyzers.Vsix.csproj", "{6D9DCE2F-02D1-436C-AC5C-BF7B8B1D9489}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryAnalyzers.Attributes", "MemoryAnalyzers.Attributes\MemoryAnalyzers.Attributes.csproj", "{99FF3A89-C5FE-48A9-979F-D47584573F1F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +35,10 @@ Global
 		{2FB88150-84A0-463C-A067-DED2B7545921}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FB88150-84A0-463C-A067-DED2B7545921}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FB88150-84A0-463C-A067-DED2B7545921}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6D9DCE2F-02D1-436C-AC5C-BF7B8B1D9489}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6D9DCE2F-02D1-436C-AC5C-BF7B8B1D9489}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6D9DCE2F-02D1-436C-AC5C-BF7B8B1D9489}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6D9DCE2F-02D1-436C-AC5C-BF7B8B1D9489}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99FF3A89-C5FE-48A9-979F-D47584573F1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99FF3A89-C5FE-48A9-979F-D47584573F1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99FF3A89-C5FE-48A9-979F-D47584573F1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99FF3A89-C5FE-48A9-979F-D47584573F1F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

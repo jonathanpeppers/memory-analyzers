@@ -10,13 +10,9 @@
 
   <PropertyGroup>
     <PackageId>MemoryAnalyzers</PackageId>
-    <Authors>Jonathan Peppers</Authors>
-    <PackageProjectUrl>https://github.com/jonathanpeppers/memory-analyzers</PackageProjectUrl>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Description>A set of Roslyn C# code analyzers for finding memory leaks</Description>
-    <Copyright>Copyright</Copyright>
-    <PackageTags>C# Roslyn memory analyzers</PackageTags>
     <DevelopmentDependency>true</DevelopmentDependency>
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddAnalyzersToOutput</TargetsForTfmSpecificContentInPackage>

@@ -1,9 +1,15 @@
 <Project>
   <PropertyGroup>
-    <!-- Projects have to opt in -->
+    <!-- Projects have to opt in to be packed -->
     <IsPackable>false</IsPackable>
     <Version>0.1.0</Version>
     <PackageVersion>$(Version)-beta.1</PackageVersion>
+    <Authors>Jonathan Peppers</Authors>
+    <PackageTags>C# Roslyn memory analyzers</PackageTags>
+    <PackageProjectUrl>https://github.com/jonathanpeppers/memory-analyzers</PackageProjectUrl>
     <PackageOutputPath>$(MSBuildThisFileDirectory)bin\$(Configuration)\</PackageOutputPath>
+    <!-- General settings -->
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 </Project>

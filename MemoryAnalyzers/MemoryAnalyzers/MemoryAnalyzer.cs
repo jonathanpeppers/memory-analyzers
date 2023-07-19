@@ -37,7 +37,7 @@ namespace MemoryAnalyzers
 			foreach (var attribute in symbol.GetAttributes())
 			{
 				// If we are marked with [SafeEvent] return
-				if (attribute.AttributeClass.Name == "SafeEventAttribute")
+				if (attribute.AttributeClass?.Name == "SafeEventAttribute")
 					return;
 			}
 

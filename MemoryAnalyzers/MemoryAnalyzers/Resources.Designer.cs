@@ -70,7 +70,7 @@ namespace MemoryAnalyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Event &apos;{0}&apos; could cause memory leaks in an NSObject subclass. Add the [SafeEvent] attribute with a justification as to why the event will not leak..
+        ///   Looks up a localized string similar to Event &apos;{0}&apos; could cause memory leaks in an NSObject subclass. Add the [MemoryLeakSafe] attribute with a justification as to why the event will not leak..
         /// </summary>
         internal static string MA0001MessageFormat {
             get {

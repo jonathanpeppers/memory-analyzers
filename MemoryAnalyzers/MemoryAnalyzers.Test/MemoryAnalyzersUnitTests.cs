@@ -87,7 +87,7 @@ namespace MemoryAnalyzers.Test
 			var test = """
 				class Foo : NSObject
 				{
-					[SafeEvent("Event tested via MemoryTests.MyEvent")]
+					[MemoryLeakSafe("Event tested via MemoryTests.MyEvent")]
 					public event EventHandler {|#0:EventName|};
 				}
 			""";
@@ -130,7 +130,7 @@ namespace MemoryAnalyzers.Test
 		}
 
 		[TestMethod]
-		public async Task LeakWithField()
+		public async Task FieldThatLeaks()
 		{
 			var test = """
 				class MyViewSubclass : UIView
@@ -141,6 +141,35 @@ namespace MemoryAnalyzers.Test
 
 			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("FieldName");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+		}
+
+		[TestMethod]
+		public async Task FieldsThatAreOK()
+		{
+			var test = """
+				class MyViewSubclass : UIView
+				{
+					public WeakReference Foo;
+					public WeakReference<UIView> Bar;
+					public double Baz;
+				}
+			""";
+
+			await VerifyCS.VerifyAnalyzerAsync(test);
+		}
+
+		[TestMethod]
+		public async Task SafeField()
+		{
+			var test = """
+				class MyViewSubclass : UIView
+				{
+					[MemoryLeakSafe("This field is unused")]
+					public UIView {|#0:FieldName|};
+				}
+			""";
+
+			await VerifyCS.VerifyAnalyzerAsync(test);
 		}
 	}
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -54,31 +55,35 @@ namespace MemoryAnalyzers
 			var symbol = context.Symbol;
 			if (!IsFromNSObjectSubclass(symbol.ContainingType))
 				return;
-
-			// If we are marked with [SafeEvent] return
-			foreach (var attribute in symbol.GetAttributes())
-			{
-				if (attribute.AttributeClass?.Name == "SafeEventAttribute")
-					return;
-			}
+			if (HasMemoryLeakSafeAttribute(symbol))
+				return;
 
 			context.ReportDiagnostic(Diagnostic.Create(EventRule, symbol.Locations[0], symbol.Name));
 		}
 
 		static void AnalyzeField(SyntaxNodeAnalysisContext context)
 		{
-			var symbol = context.ContainingSymbol;
-			if (symbol is null || !IsFromNSObjectSubclass(symbol.ContainingType))
+			if (context.ContainingSymbol is not IFieldSymbol symbol || !IsFromNSObjectSubclass(symbol.ContainingType))
+				return;
+			if (HasMemoryLeakSafeAttribute(symbol))
+				return;
+			if (symbol.Type.Name == "WeakReference" ||
+				symbol.Type.Name.StartsWith("WeakReference<", StringComparison.Ordinal))
+				return;
+			if (symbol.Type.IsValueType)
 				return;
 
-			// If we are marked with [SafeField] return
+			context.ReportDiagnostic(Diagnostic.Create(FieldRule, symbol.Locations[0], symbol.Name));
+		}
+
+		static bool HasMemoryLeakSafeAttribute(ISymbol symbol)
+		{
 			foreach (var attribute in symbol.GetAttributes())
 			{
-				if (attribute.AttributeClass?.Name == "SafeFieldAttribute")
-					return;
+				if (attribute.AttributeClass?.Name == "MemoryLeakSafeAttribute")
+					return true;
 			}
-
-			context.ReportDiagnostic(Diagnostic.Create(FieldRule, symbol.Locations[0], symbol.Name));
+			return false;
 		}
 
 		static bool IsFromNSObjectSubclass(INamedTypeSymbol type)

@@ -38,12 +38,12 @@ namespace MemoryAnalyzers.Test
 			test.TestState.Sources.Add("global using Foundation;");
 			test.TestState.Sources.Add("global using UIKit;");
 
-			// [SafeEvent] attribute
+			// [Safe*] attributes
 			test.TestState.Sources.Add("""
-				[AttributeUsage(AttributeTargets.Event)]
-				sealed class SafeEventAttribute : Attribute
+				[AttributeUsage(AttributeTargets.Event | AttributeTargets.Field)]
+				sealed class MemoryLeakSafeAttribute : Attribute
 				{
-					public SafeEventAttribute(string justification)
+					public MemoryLeakSafeAttribute(string justification)
 					{
 						Justification = justification;
 					}

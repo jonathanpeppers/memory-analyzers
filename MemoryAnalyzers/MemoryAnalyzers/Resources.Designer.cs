@@ -70,7 +70,7 @@ namespace MemoryAnalyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Event &apos;{0}&apos; could cause memory leaks in an NSObject subclass. Add the [MemoryLeakSafe] attribute with a justification as to why the event will not leak..
+        ///   Looks up a localized string similar to Event &apos;{0}&apos; could cause memory leaks in an NSObject subclass. Remove the event or add the [MemoryLeakSafe] attribute with a justification as to why the event will not leak..
         /// </summary>
         internal static string MA0001MessageFormat {
             get {
@@ -97,7 +97,7 @@ namespace MemoryAnalyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Member &apos;{0}&apos; could cause memory leaks in an NSObject subclass. Add the [MemoryLeakSafe] attribute with a justification as to why the member will not leak..
+        ///   Looks up a localized string similar to Member &apos;{0}&apos; could cause memory leaks in an NSObject subclass. Remove the member or add the [MemoryLeakSafe] attribute with a justification as to why the member will not leak..
         /// </summary>
         internal static string MA0002MessageFormat {
             get {
@@ -124,7 +124,7 @@ namespace MemoryAnalyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Subscribing to events with instance method &apos;{0}&apos; could cause memory leaks in an NSObject subclass. Convert the method to a static method..
+        ///   Looks up a localized string similar to Subscribing to events with instance method &apos;{0}&apos; could cause memory leaks in an NSObject subclass. Remove the subscription or convert the method to a static method..
         /// </summary>
         internal static string MA0003MessageFormat {
             get {

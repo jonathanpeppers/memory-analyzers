@@ -121,7 +121,7 @@
     <value>C# events in NSObject subclasses can cause memory leaks.</value>
   </data>
   <data name="MA0001MessageFormat" xml:space="preserve">
-    <value>Event '{0}' could cause memory leaks in an NSObject subclass. Add the [MemoryLeakSafe] attribute with a justification as to why the event will not leak.</value>
+    <value>Event '{0}' could cause memory leaks in an NSObject subclass. Remove the event or add the [MemoryLeakSafe] attribute with a justification as to why the event will not leak.</value>
   </data>
   <data name="MA0001Title" xml:space="preserve">
     <value>C# events in NSObject subclasses can cause memory leaks</value>
@@ -130,7 +130,7 @@
     <value>Reference type members in NSObject subclasses can cause memory leaks.</value>
   </data>
   <data name="MA0002MessageFormat" xml:space="preserve">
-    <value>Member '{0}' could cause memory leaks in an NSObject subclass. Add the [MemoryLeakSafe] attribute with a justification as to why the member will not leak.</value>
+    <value>Member '{0}' could cause memory leaks in an NSObject subclass. Remove the member or add the [MemoryLeakSafe] attribute with a justification as to why the member will not leak.</value>
   </data>
   <data name="MA0002Title" xml:space="preserve">
     <value>Reference type members in NSObject subclasses can cause memory leaks</value>
@@ -139,7 +139,7 @@
     <value>Subscribing to events in NSObject subclasses can cause memory leaks.</value>
   </data>
   <data name="MA0003MessageFormat" xml:space="preserve">
-    <value>Subscribing to events with instance method '{0}' could cause memory leaks in an NSObject subclass. Convert the method to a static method.</value>
+    <value>Subscribing to events with instance method '{0}' could cause memory leaks in an NSObject subclass. Remove the subscription or convert the method to a static method.</value>
   </data>
   <data name="MA0003Title" xml:space="preserve">
     <value>Subscribing to events NSObject subclasses can cause memory leaks</value>

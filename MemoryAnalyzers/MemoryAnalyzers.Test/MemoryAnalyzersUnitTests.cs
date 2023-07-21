@@ -281,6 +281,7 @@ namespace MemoryAnalyzers.Test
 					public MyView()
 					{
 						MyOwnedEvent += OnMyOwnedEvent;
+						this.MyOwnedEvent += OnMyOwnedEvent;
 
 						new UITextField().EditingDidBegin += OnEditingDidBegin;
 					}

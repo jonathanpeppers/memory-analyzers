@@ -289,7 +289,7 @@ namespace MemoryAnalyzers.Test
 						MyOwnedEvent += OnMyOwnedEvent;
 						this.MyOwnedEvent += OnMyOwnedEvent;
 						InheritedEvent += OnInheritedEvent;
-						this.OnInheritedEvent += OnInheritedEvent;
+						this.InheritedEvent += OnInheritedEvent;
 
 						new UITextField().EditingDidBegin += OnEditingDidBegin;
 					}

@@ -5,7 +5,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Operations;
 
 namespace MemoryAnalyzers
 {
@@ -121,9 +120,27 @@ namespace MemoryAnalyzers
 			if (rightInfo.Symbol is not IMethodSymbol methodSymbol || methodSymbol.IsStatic)
 				return; // static methods are fine
 			var leftInfo = context.SemanticModel.GetSymbolInfo(assignment.Left);
-			if (leftInfo.Symbol is IEventSymbol eventSymbol && SymbolEqualityComparer.Default.Equals(eventSymbol.ContainingSymbol, methodSymbol.ContainingSymbol))
+			if (leftInfo.Symbol is IEventSymbol eventSymbol && IsOwnedEvent(eventSymbol, methodSymbol))
 				return; // Subscribing to events you declare are fine
 			context.ReportDiagnostic(Diagnostic.Create(MA0003Rule, assignment.Right.GetLocation(), methodSymbol.Name));
+		}
+
+		// Returns true, if the class is subscribing to its own event, or event from subclass
+		static bool IsOwnedEvent(IEventSymbol eventSymbol, IMethodSymbol methodSymbol)
+		{
+			if (SymbolEqualityComparer.Default.Equals(eventSymbol.ContainingSymbol, methodSymbol.ContainingSymbol))
+				return true;
+
+			var baseType = methodSymbol.ContainingType.BaseType;
+			while (baseType != null)
+			{
+				if (SymbolEqualityComparer.Default.Equals(eventSymbol.ContainingSymbol, baseType))
+					return true;
+
+				baseType = baseType.BaseType;
+			}
+
+			return false;
 		}
 
 		static bool HasMemoryLeakSafeAttribute(ISymbol symbol)

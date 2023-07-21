@@ -271,7 +271,13 @@ namespace MemoryAnalyzers.Test
 					public event EventHandler EditingDidBegin;
 				}
 
-				class MyView : UIView
+				class MySubclass : UIView
+				{
+					[MemoryLeakSafe("Ignore for this test")]
+					public event EventHandler InheritedEvent;
+				}
+
+				class MyView : MySubclass
 				{
 					[MemoryLeakSafe("Ignore for this test")]
 					public event EventHandler MyOwnedEvent;
@@ -282,11 +288,15 @@ namespace MemoryAnalyzers.Test
 					{
 						MyOwnedEvent += OnMyOwnedEvent;
 						this.MyOwnedEvent += OnMyOwnedEvent;
+						InheritedEvent += OnInheritedEvent;
+						this.OnInheritedEvent += OnInheritedEvent;
 
 						new UITextField().EditingDidBegin += OnEditingDidBegin;
 					}
 
 					void OnMyOwnedEvent(object sender, EventArgs e) { }
+
+					void OnInheritedEvent(object sender, EventArgs e) { }
 
 					static void OnEditingDidBegin(object sender, EventArgs e) { }
 				}

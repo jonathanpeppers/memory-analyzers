@@ -57,7 +57,7 @@ namespace MemoryAnalyzers
 		async Task<Solution> MakeUppercaseAsync(Document document, EventFieldDeclarationSyntax @event, CancellationToken cancellationToken)
 		{
 			var root = await document.GetSyntaxRootAsync(cancellationToken);
-			if (root is null)
+			if (root is null || @event.Parent is null)
 				return document.Project.Solution;
 
 			var attributes = @event.AttributeLists.Add(
@@ -71,11 +71,11 @@ namespace MemoryAnalyzers
 											Literal("Proven safe in test: XYZ"))))))
 				)));
 
-			return document.WithSyntaxRoot(
-				root.ReplaceNode(
-					@event,
-					@event.WithAttributeLists(attributes).NormalizeWhitespace()
-				)).Project.Solution;
+			var parent = @event.Parent
+				.ReplaceNode(@event, @event.WithAttributeLists(attributes))
+				.NormalizeWhitespace();
+
+			return document.WithSyntaxRoot(root.ReplaceNode(@event.Parent, parent)).Project.Solution;
 		}
 	}
 }

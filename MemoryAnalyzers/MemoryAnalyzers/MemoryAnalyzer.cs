@@ -3,7 +3,9 @@ using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace MemoryAnalyzers
 {
@@ -13,7 +15,7 @@ namespace MemoryAnalyzers
 		public const string DiagnosticId = "MemoryAnalyzers";
 		private const string Category = "Memory";
 
-		static readonly DiagnosticDescriptor EventRule = new(
+		static readonly DiagnosticDescriptor MA0001Rule = new(
 			"MA0001",
 			new LocalizableResourceString(nameof(Resources.MA0001Title),
 			Resources.ResourceManager, typeof(Resources)),
@@ -25,7 +27,7 @@ namespace MemoryAnalyzers
 			description: new LocalizableResourceString(nameof(Resources.MA0001Description), Resources.ResourceManager, typeof(Resources))
 		);
 
-		static readonly DiagnosticDescriptor FieldRule = new(
+		static readonly DiagnosticDescriptor MA0002Rule = new(
 			"MA0002",
 			new LocalizableResourceString(nameof(Resources.MA0002Title),
 			Resources.ResourceManager, typeof(Resources)),
@@ -37,7 +39,19 @@ namespace MemoryAnalyzers
 			description: new LocalizableResourceString(nameof(Resources.MA0002Description), Resources.ResourceManager, typeof(Resources))
 		);
 
-		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(EventRule, FieldRule); } }
+		static readonly DiagnosticDescriptor MA0003Rule = new(
+			"MA0003",
+			new LocalizableResourceString(nameof(Resources.MA0003Title),
+			Resources.ResourceManager, typeof(Resources)),
+			new LocalizableResourceString(nameof(Resources.MA0003MessageFormat),
+			Resources.ResourceManager, typeof(Resources)),
+			Category,
+			DiagnosticSeverity.Warning,
+			isEnabledByDefault: true,
+			description: new LocalizableResourceString(nameof(Resources.MA0003Description), Resources.ResourceManager, typeof(Resources))
+		);
+
+		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(MA0001Rule, MA0002Rule, MA0003Rule); } }
 
 		public override void Initialize(AnalysisContext context)
 		{
@@ -49,6 +63,7 @@ namespace MemoryAnalyzers
 			context.RegisterSymbolAction(AnalyzeEvent, SymbolKind.Event);
 			context.RegisterSyntaxNodeAction(AnalyzeField, SyntaxKind.FieldDeclaration);
 			context.RegisterSyntaxNodeAction(AnalyzeProperty, SyntaxKind.PropertyDeclaration);
+			context.RegisterSyntaxNodeAction(AnalyzeSubscription, SyntaxKind.AddAssignmentExpression);
 		}
 
 		static void AnalyzeEvent(SymbolAnalysisContext context)
@@ -59,7 +74,7 @@ namespace MemoryAnalyzers
 			if (HasMemoryLeakSafeAttribute(symbol))
 				return;
 
-			context.ReportDiagnostic(Diagnostic.Create(EventRule, symbol.Locations[0], symbol.Name));
+			context.ReportDiagnostic(Diagnostic.Create(MA0001Rule, symbol.Locations[0], symbol.Name));
 		}
 
 		static void AnalyzeField(SyntaxNodeAnalysisContext context)
@@ -74,7 +89,7 @@ namespace MemoryAnalyzers
 			if (symbol.Type.IsValueType)
 				return;
 
-			context.ReportDiagnostic(Diagnostic.Create(FieldRule, symbol.Locations[0], symbol.Name));
+			context.ReportDiagnostic(Diagnostic.Create(MA0002Rule, symbol.Locations[0], symbol.Name));
 		}
 
 		static void AnalyzeProperty(SyntaxNodeAnalysisContext context)
@@ -89,7 +104,16 @@ namespace MemoryAnalyzers
 			if (symbol.Type.IsValueType)
 				return;
 
-			context.ReportDiagnostic(Diagnostic.Create(FieldRule, symbol.Locations[0], symbol.Name));
+			context.ReportDiagnostic(Diagnostic.Create(MA0002Rule, symbol.Locations[0], symbol.Name));
+		}
+
+		static void AnalyzeSubscription(SyntaxNodeAnalysisContext context)
+		{
+			if (context.ContainingSymbol is not ISymbol symbol || !IsFromNSObjectSubclass(symbol.ContainingType))
+				return;
+			if (context.Node is not AssignmentExpressionSyntax assignment)
+				return;
+			context.ReportDiagnostic(Diagnostic.Create(MA0003Rule, assignment.Right.GetLocation(), assignment.Right.ToString()));
 		}
 
 		static bool HasMemoryLeakSafeAttribute(ISymbol symbol)

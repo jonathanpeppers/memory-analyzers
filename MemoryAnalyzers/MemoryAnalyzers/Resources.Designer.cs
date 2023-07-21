@@ -113,5 +113,32 @@ namespace MemoryAnalyzers {
                 return ResourceManager.GetString("MA0002Title", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Subscribing to events in NSObject subclasses can cause memory leaks..
+        /// </summary>
+        internal static string MA0003Description {
+            get {
+                return ResourceManager.GetString("MA0003Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Subscribing to events with instance method &apos;{0}&apos; could cause memory leaks in an NSObject subclass. Convert the method to a static method..
+        /// </summary>
+        internal static string MA0003MessageFormat {
+            get {
+                return ResourceManager.GetString("MA0003MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Subscribing to events NSObject subclasses can cause memory leaks.
+        /// </summary>
+        internal static string MA0003Title {
+            get {
+                return ResourceManager.GetString("MA0003Title", resourceCulture);
+            }
+        }
     }
 }

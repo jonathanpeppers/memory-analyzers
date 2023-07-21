@@ -113,7 +113,10 @@ namespace MemoryAnalyzers
 				return;
 			if (context.Node is not AssignmentExpressionSyntax assignment)
 				return;
-			context.ReportDiagnostic(Diagnostic.Create(MA0003Rule, assignment.Right.GetLocation(), assignment.Right.ToString()));
+			var symbolInfo = context.SemanticModel.GetSymbolInfo(assignment.Right);
+			if (symbolInfo.Symbol is not IMethodSymbol methodSymbol || methodSymbol.IsStatic)
+				return;
+			context.ReportDiagnostic(Diagnostic.Create(MA0003Rule, assignment.Right.GetLocation(), methodSymbol.Name));
 		}
 
 		static bool HasMemoryLeakSafeAttribute(ISymbol symbol)

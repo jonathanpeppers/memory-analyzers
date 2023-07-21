@@ -261,6 +261,33 @@ namespace MemoryAnalyzers.Test
 		}
 
 		[TestMethod]
+		public async Task SubscriptionLocalThatLeaks()
+		{
+			var test = """
+				[Register(Name = "UITextField", IsWrapper = true)]
+				class UITextField
+				{
+					[MemoryLeakSafe("Ignore for this test")]
+					public event EventHandler EditingDidBegin;
+				}
+
+				class MyView : UIView
+				{
+					public MyView()
+					{
+						var field = new UITextField();
+						field.EditingDidBegin += {|#0:OnEditingDidBegin|};
+					}
+
+					void OnEditingDidBegin(object sender, EventArgs e) { }
+				}
+			""";
+
+			var expected = VerifyCS.Diagnostic("MA0003").WithLocation(0).WithArguments("OnEditingDidBegin");
+			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+		}
+
+		[TestMethod]
 		public async Task SubscriptionThatIsOK()
 		{
 			var test = """

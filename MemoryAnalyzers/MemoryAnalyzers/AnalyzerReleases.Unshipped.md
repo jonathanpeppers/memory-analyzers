@@ -6,4 +6,4 @@
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 MA0001 | Memory | Warning | C# events can cause memory leaks in an NSObject subclass. Add the [MemoryLeakSafe] attribute with a justification as to why the event will not leak.
-MA0002 | Memory | Warning | Reference type fields can cause memory leaks in an NSObject subclass. Add the [MemoryLeakSafe] attribute with a justification as to why the field will not leak.
+MA0002 | Memory | Warning | Reference type members can cause memory leaks in an NSObject subclass. Add the [MemoryLeakSafe] attribute with a justification as to why the member will not leak.

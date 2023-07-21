@@ -88,7 +88,7 @@ namespace MemoryAnalyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reference type fields in NSObject subclasses can cause memory leaks..
+        ///   Looks up a localized string similar to Reference type members in NSObject subclasses can cause memory leaks..
         /// </summary>
         internal static string MA0002Description {
             get {
@@ -97,7 +97,7 @@ namespace MemoryAnalyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Field &apos;{0}&apos; could cause memory leaks in an NSObject subclass. Add the [SafeField] attribute with a justification as to why the field will not leak..
+        ///   Looks up a localized string similar to Member &apos;{0}&apos; could cause memory leaks in an NSObject subclass. Add the [MemoryLeakSafe] attribute with a justification as to why the member will not leak..
         /// </summary>
         internal static string MA0002MessageFormat {
             get {
@@ -106,7 +106,7 @@ namespace MemoryAnalyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reference type fields in NSObject subclasses can cause memory leaks.
+        ///   Looks up a localized string similar to Reference type members in NSObject subclasses can cause memory leaks.
         /// </summary>
         internal static string MA0002Title {
             get {

@@ -40,7 +40,7 @@ namespace MemoryAnalyzers.Test
 
 			// [Safe*] attributes
 			test.TestState.Sources.Add("""
-				[AttributeUsage(AttributeTargets.Event | AttributeTargets.Field)]
+				[AttributeUsage(AttributeTargets.Event | AttributeTargets.Field | AttributeTargets.Property)]
 				sealed class MemoryLeakSafeAttribute : Attribute
 				{
 					public MemoryLeakSafeAttribute(string justification)

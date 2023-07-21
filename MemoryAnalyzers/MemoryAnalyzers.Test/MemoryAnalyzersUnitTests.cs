@@ -164,8 +164,51 @@ namespace MemoryAnalyzers.Test
 			var test = """
 				class MyViewSubclass : UIView
 				{
-					[MemoryLeakSafe("This field is unused")]
+					[MemoryLeakSafe("Field tested via MemoryTests.MyField")]
 					public UIView {|#0:FieldName|};
+				}
+			""";
+
+			await VerifyCS.VerifyAnalyzerAsync(test);
+		}
+
+		[TestMethod]
+		public async Task PropertyThatLeaks()
+		{
+			var test = """
+				class MyViewSubclass : UIView
+				{
+					public UIView {|#0:FieldName|} { get; set; }
+				}
+			""";
+
+			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("FieldName");
+			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+		}
+
+		[TestMethod]
+		public async Task PropertiesThatAreOK()
+		{
+			var test = """
+				class MyViewSubclass : UIView
+				{
+					public WeakReference Foo { get; set; }
+					public WeakReference<UIView> Bar { get; set; }
+					public double Baz { get; set; }
+				}
+			""";
+
+			await VerifyCS.VerifyAnalyzerAsync(test);
+		}
+
+		[TestMethod]
+		public async Task SafeProperty()
+		{
+			var test = """
+				class MyViewSubclass : UIView
+				{
+					[MemoryLeakSafe("Property tested via MemoryTests.MyProperty")]
+					public UIView {|#0:FieldName|} { get; set; }
 				}
 			""";
 

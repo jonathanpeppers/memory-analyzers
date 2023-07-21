@@ -48,6 +48,7 @@ namespace MemoryAnalyzers
 			// See https://github.com/dotnet/roslyn/blob/main/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
 			context.RegisterSymbolAction(AnalyzeEvent, SymbolKind.Event);
 			context.RegisterSyntaxNodeAction(AnalyzeField, SyntaxKind.FieldDeclaration);
+			context.RegisterSyntaxNodeAction(AnalyzeProperty, SyntaxKind.PropertyDeclaration);
 		}
 
 		static void AnalyzeEvent(SymbolAnalysisContext context)
@@ -64,6 +65,21 @@ namespace MemoryAnalyzers
 		static void AnalyzeField(SyntaxNodeAnalysisContext context)
 		{
 			if (context.ContainingSymbol is not IFieldSymbol symbol || !IsFromNSObjectSubclass(symbol.ContainingType))
+				return;
+			if (HasMemoryLeakSafeAttribute(symbol))
+				return;
+			if (symbol.Type.Name == "WeakReference" ||
+				symbol.Type.Name.StartsWith("WeakReference<", StringComparison.Ordinal))
+				return;
+			if (symbol.Type.IsValueType)
+				return;
+
+			context.ReportDiagnostic(Diagnostic.Create(FieldRule, symbol.Locations[0], symbol.Name));
+		}
+
+		static void AnalyzeProperty(SyntaxNodeAnalysisContext context)
+		{
+			if (context.ContainingSymbol is not IPropertySymbol symbol || !IsFromNSObjectSubclass(symbol.ContainingType))
 				return;
 			if (HasMemoryLeakSafeAttribute(symbol))
 				return;

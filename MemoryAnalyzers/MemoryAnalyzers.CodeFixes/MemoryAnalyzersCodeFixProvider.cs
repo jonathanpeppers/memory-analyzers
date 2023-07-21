@@ -19,7 +19,7 @@ namespace MemoryAnalyzers
 	{
 		public sealed override ImmutableArray<string> FixableDiagnosticIds
 		{
-			get { return ImmutableArray.Create(MemoryAnalyzer.MA0001); }
+			get { return ImmutableArray.Create(MemoryAnalyzer.MA0001, MemoryAnalyzer.MA0002); }
 		}
 
 		public sealed override FixAllProvider GetFixAllProvider()
@@ -33,34 +33,41 @@ namespace MemoryAnalyzers
 			var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 			if (root is null)
 				return;
-
-			// TODO: Replace the following code with your own analysis, generating a CodeAction for each fix to suggest
 			var diagnostic = context.Diagnostics.First();
 			var diagnosticSpan = diagnostic.Location.SourceSpan;
-
-			// Find the type declaration identified by the diagnostic.
 			var parent = root.FindToken(diagnosticSpan.Start).Parent;
 			if (parent is null)
 				return;
 
-			var declaration = parent.AncestorsAndSelf().OfType<EventFieldDeclarationSyntax>().First();
-
-			// Register a code action that will invoke the fix.
-			context.RegisterCodeFix(
-				CodeAction.Create(
-					title: CodeFixResources.MA0001Title,
-					createChangedSolution: c => MakeUppercaseAsync(context.Document, declaration, c),
-					equivalenceKey: nameof(CodeFixResources.MA0001Title)),
-				diagnostic);
+			if (diagnostic.Id == MemoryAnalyzer.MA0001)
+			{
+				var declaration = parent.AncestorsAndSelf().OfType<EventFieldDeclarationSyntax>().First();
+				context.RegisterCodeFix(
+					CodeAction.Create(
+						title: CodeFixResources.AddMemoryLeakSafe,
+						createChangedSolution: c => AddMemorySafeAttribute(context.Document, declaration, c),
+						equivalenceKey: nameof(CodeFixResources.AddMemoryLeakSafe)),
+					diagnostic);
+			}
+			else if (diagnostic.Id == MemoryAnalyzer.MA0002)
+			{
+				var declaration = parent.AncestorsAndSelf().OfType<MemberDeclarationSyntax>().First();
+				context.RegisterCodeFix(
+					CodeAction.Create(
+						title: CodeFixResources.AddMemoryLeakSafe,
+						createChangedSolution: c => AddMemorySafeAttribute(context.Document, declaration, c),
+						equivalenceKey: nameof(CodeFixResources.AddMemoryLeakSafe)),
+					diagnostic);
+			}
 		}
 
-		async Task<Solution> MakeUppercaseAsync(Document document, EventFieldDeclarationSyntax @event, CancellationToken cancellationToken)
+		async Task<Solution> AddMemorySafeAttribute(Document document, MemberDeclarationSyntax member, CancellationToken cancellationToken)
 		{
 			var root = await document.GetSyntaxRootAsync(cancellationToken);
-			if (root is null || @event.Parent is null)
+			if (root is null || member.Parent is null)
 				return document.Project.Solution;
 
-			var attributes = @event.AttributeLists.Add(
+			var attributes = member.AttributeLists.Add(
 				AttributeList(SingletonSeparatedList(
 					Attribute(IdentifierName("MemoryLeakSafe"))
 						.WithArgumentList(AttributeArgumentList(
@@ -71,11 +78,11 @@ namespace MemoryAnalyzers
 											Literal("Proven safe in test: XYZ"))))))
 				)));
 
-			var parent = @event.Parent
-				.ReplaceNode(@event, @event.WithAttributeLists(attributes))
+			var parent = member.Parent
+				.ReplaceNode(member, member.WithAttributeLists(attributes))
 				.NormalizeWhitespace();
 
-			return document.WithSyntaxRoot(root.ReplaceNode(@event.Parent, parent)).Project.Solution;
+			return document.WithSyntaxRoot(root.ReplaceNode(member.Parent, parent)).Project.Solution;
 		}
 	}
 }

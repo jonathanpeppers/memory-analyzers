@@ -10,7 +10,7 @@ namespace MemoryAnalyzers.Test
 	public class CodeFixUnitTests
 	{
 		[TestMethod]
-		public async Task CodeFix()
+		public async Task MA0001_MemoryLeakSafe()
 		{
 			var test = """
 			class Foo : NSObject
@@ -29,6 +29,29 @@ namespace MemoryAnalyzers.Test
 			;
 
 			var expected = VerifyCS.Diagnostic("MA0001").WithLocation(0).WithArguments("EventName");
+			await VerifyCS.VerifyCodeFixAsync(test, expected, codefix);
+		}
+
+		[TestMethod]
+		public async Task MA0002_MemoryLeakSafe()
+		{
+			var test = """
+			class Foo : NSObject
+			{
+			    public UIView {|#0:FieldName|};
+			}
+			""";
+
+			var codefix = """
+			class Foo : NSObject
+			{
+			    [MemoryLeakSafe("Proven safe in test: XYZ")]
+			    public UIView {|#0:FieldName|};
+			}
+			""";
+			;
+
+			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("FieldName");
 			await VerifyCS.VerifyCodeFixAsync(test, expected, codefix);
 		}
 	}

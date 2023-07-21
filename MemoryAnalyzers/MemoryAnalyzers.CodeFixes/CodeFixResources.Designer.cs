@@ -63,9 +63,9 @@ namespace MemoryAnalyzers {
         /// <summary>
         ///   Looks up a localized string similar to Add [MemoryLeakSafe] attribute.
         /// </summary>
-        internal static string MA0001Title {
+        internal static string AddMemoryLeakSafe {
             get {
-                return ResourceManager.GetString("MA0001Title", resourceCulture);
+                return ResourceManager.GetString("AddMemoryLeakSafe", resourceCulture);
             }
         }
     }

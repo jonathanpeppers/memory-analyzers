@@ -69,6 +69,8 @@ namespace MemoryAnalyzers
 		static void AnalyzeEvent(SymbolAnalysisContext context)
 		{
 			var symbol = context.Symbol;
+			if (symbol.DeclaredAccessibility == Accessibility.Private)
+				return;
 			if (!IsFromNSObjectSubclass(symbol.ContainingType))
 				return;
 			if (HasMemoryLeakSafeAttribute(symbol))
@@ -115,9 +117,12 @@ namespace MemoryAnalyzers
 				return;
 			if (context.Node is not AssignmentExpressionSyntax assignment)
 				return;
-			var symbolInfo = context.SemanticModel.GetSymbolInfo(assignment.Right);
-			if (symbolInfo.Symbol is not IMethodSymbol methodSymbol || methodSymbol.IsStatic)
-				return;
+			var rightInfo = context.SemanticModel.GetSymbolInfo(assignment.Right);
+			if (rightInfo.Symbol is not IMethodSymbol methodSymbol || methodSymbol.IsStatic)
+				return; // static methods are fine
+			var leftInfo = context.SemanticModel.GetSymbolInfo(assignment.Left);
+			if (leftInfo.Symbol is IEventSymbol eventSymbol && SymbolEqualityComparer.Default.Equals(eventSymbol.ContainingSymbol, methodSymbol.ContainingSymbol))
+				return; // Subscribing to events you declare are fine
 			context.ReportDiagnostic(Diagnostic.Create(MA0003Rule, assignment.Right.GetLocation(), methodSymbol.Name));
 		}
 

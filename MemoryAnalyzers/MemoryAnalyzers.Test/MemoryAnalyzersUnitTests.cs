@@ -68,7 +68,7 @@ namespace MemoryAnalyzers.Test
 		}
 
 		[TestMethod]
-		public async Task EventHandler()
+		public async Task Event()
 		{
 			var test = """
 				class Foo : NSObject
@@ -82,7 +82,7 @@ namespace MemoryAnalyzers.Test
 		}
 
 		[TestMethod]
-		public async Task SafeEventHandler()
+		public async Task SafeEvent()
 		{
 			var test = """
 				class Foo : NSObject
@@ -97,7 +97,21 @@ namespace MemoryAnalyzers.Test
 		}
 
 		[TestMethod]
-		public async Task EventHandlerNamedArguments()
+		public async Task EventThatIsOk()
+		{
+			var test = """
+				class Foo : NSObject
+				{
+					event EventHandler {|#0:EventName|};
+				}
+			""";
+
+			// 0 warnings
+			await VerifyCS.VerifyAnalyzerAsync(test);
+		}
+
+		[TestMethod]
+		public async Task EventNamedArguments()
 		{
 			var test = """
 				[Register(Name = "UITextField", IsWrapper = true)]
@@ -259,10 +273,19 @@ namespace MemoryAnalyzers.Test
 
 				class MyView : UIView
 				{
+					[MemoryLeakSafe("Ignore for this test")]
+					public event EventHandler MyOwnedEvent;
+
+					event EventHandler MyPrivateEvent;
+
 					public MyView()
 					{
-						new UITextField().EditingDidBegin += {|#0:OnEditingDidBegin|};
+						MyOwnedEvent += OnMyOwnedEvent;
+
+						new UITextField().EditingDidBegin += OnEditingDidBegin;
 					}
+
+					void OnMyOwnedEvent(object sender, EventArgs e) { }
 
 					static void OnEditingDidBegin(object sender, EventArgs e) { }
 				}

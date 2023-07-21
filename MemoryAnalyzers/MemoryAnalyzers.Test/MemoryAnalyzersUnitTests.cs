@@ -128,5 +128,19 @@ namespace MemoryAnalyzers.Test
 			var expected = VerifyCS.Diagnostic("MA0001").WithLocation(0).WithArguments("EventName");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
 		}
+
+		[TestMethod]
+		public async Task LeakWithField()
+		{
+			var test = """
+				class MyViewSubclass : UIView
+				{
+					public UIView {|#0:FieldName|};
+				}
+			""";
+
+			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("FieldName");
+			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+		}
 	}
 }

@@ -5,4 +5,5 @@
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-MA0001 | Memory | Warning | C# events can cause memory leaks. Add the `[SafeEvent]` attribute with a justification as to why the event will not leak.
+MA0001 | Memory | Warning | C# events can cause memory leaks in an NSObject subclass. Add the [SafeEvent] attribute with a justification as to why the event will not leak.
+MA0002 | Memory | Warning | Reference type fields can cause memory leaks in an NSObject subclass. Add the [SafeField] attribute with a justification as to why the field will not leak.

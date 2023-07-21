@@ -63,27 +63,54 @@ namespace MemoryAnalyzers {
         /// <summary>
         ///   Looks up a localized string similar to C# events in NSObject subclasses can cause memory leaks..
         /// </summary>
-        internal static string AnalyzerDescription {
+        internal static string MA0001Description {
             get {
-                return ResourceManager.GetString("AnalyzerDescription", resourceCulture);
+                return ResourceManager.GetString("MA0001Description", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Event &apos;{0}&apos; could cause memory leaks in an NSObject subclass. Add the [SafeEvent] attribute with a justification as to why the event will not leak..
         /// </summary>
-        internal static string AnalyzerMessageFormat {
+        internal static string MA0001MessageFormat {
             get {
-                return ResourceManager.GetString("AnalyzerMessageFormat", resourceCulture);
+                return ResourceManager.GetString("MA0001MessageFormat", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to C# events in NSObject subclasses can cause memory leaks.
         /// </summary>
-        internal static string AnalyzerTitle {
+        internal static string MA0001Title {
             get {
-                return ResourceManager.GetString("AnalyzerTitle", resourceCulture);
+                return ResourceManager.GetString("MA0001Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reference type fields in NSObject subclasses can cause memory leaks..
+        /// </summary>
+        internal static string MA0002Description {
+            get {
+                return ResourceManager.GetString("MA0002Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Field &apos;{0}&apos; could cause memory leaks in an NSObject subclass. Add the [SafeField] attribute with a justification as to why the field will not leak..
+        /// </summary>
+        internal static string MA0002MessageFormat {
+            get {
+                return ResourceManager.GetString("MA0002MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reference type fields in NSObject subclasses can cause memory leaks.
+        /// </summary>
+        internal static string MA0002Title {
+            get {
+                return ResourceManager.GetString("MA0002Title", resourceCulture);
             }
         }
     }

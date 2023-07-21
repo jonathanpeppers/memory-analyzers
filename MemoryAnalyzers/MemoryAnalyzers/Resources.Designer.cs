@@ -97,7 +97,7 @@ namespace MemoryAnalyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Member &apos;{0}&apos; could cause memory leaks in an NSObject subclass. Remove the member or add the [MemoryLeakSafe] attribute with a justification as to why the member will not leak..
+        ///   Looks up a localized string similar to Member &apos;{0}&apos; could cause memory leaks in an NSObject subclass. Remove the member, store the value as a WeakReference, or add the [MemoryLeakSafe] attribute with a justification as to why the member will not leak..
         /// </summary>
         internal static string MA0002MessageFormat {
             get {

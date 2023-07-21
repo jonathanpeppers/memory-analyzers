@@ -195,6 +195,11 @@ namespace MemoryAnalyzers.Test
 					public WeakReference Foo { get; set; }
 					public WeakReference<UIView> Bar { get; set; }
 					public double Baz { get; set; }
+					public UIView EmptyProperty
+					{
+						set => throw new NotImplementedException();
+						get => throw new NotImplementedException();
+					}
 				}
 			""";
 

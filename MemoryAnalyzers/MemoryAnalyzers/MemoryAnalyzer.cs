@@ -103,6 +103,8 @@ namespace MemoryAnalyzers
 			if (symbol.Type.Name == "WeakReference" ||
 				symbol.Type.Name.StartsWith("WeakReference<", StringComparison.Ordinal))
 				return;
+			if (!IsAutoProperty(symbol))
+				return;
 
 			context.ReportDiagnostic(Diagnostic.Create(MA0002Rule, symbol.Locations[0], symbol.Name));
 		}
@@ -155,6 +157,16 @@ namespace MemoryAnalyzers
 				return false;
 
 			return IsFromNSObjectSubclass(baseType);
+		}
+
+		//Swiped from: https://www.meziantou.net/checking-if-a-property-is-an-auto-implemented-property-in-roslyn.htm
+		static bool IsAutoProperty(IPropertySymbol propertySymbol)
+		{
+			// Get fields declared in the same type as the property
+			var fields = propertySymbol.ContainingType.GetMembers().OfType<IFieldSymbol>();
+
+			// Check if one field is associated to
+			return fields.Any(field => SymbolEqualityComparer.Default.Equals(field.AssociatedSymbol, propertySymbol));
 		}
 	}
 }

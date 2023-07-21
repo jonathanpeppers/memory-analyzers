@@ -15,15 +15,15 @@ namespace MemoryAnalyzers.Test
 			var test = """
 			class Foo : NSObject
 			{
-				public event EventHandler {|#0:EventName|};
+			    public event EventHandler {|#0:EventName|};
 			}
 			""";
 
 			var codefix = """
 			class Foo : NSObject
 			{
-				[MemoryLeakSafe("Proven safe in test: XYZ")]
-				public event EventHandler {|#0:EventName|};
+			    [MemoryLeakSafe("Proven safe in test: XYZ")]
+			    public event EventHandler {|#0:EventName|};
 			}
 			""";
 			;

@@ -48,7 +48,6 @@ namespace MemoryAnalyzers.Test
 			    public event EventHandler {|#0:EventName|};
 			}
 			""";
-			;
 
 			var expected = VerifyCS.Diagnostic("MA0001").WithLocation(0).WithArguments("EventName");
 			await VerifyCS.VerifyCodeFixAsync(test, expected, codefix, index: 1);

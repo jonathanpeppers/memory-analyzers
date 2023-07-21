@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -87,10 +85,12 @@ namespace MemoryAnalyzers
 			if (root is null || member.Parent is null)
 				return document.Project.Solution;
 
+			// Used: http://roslynquoter.azurewebsites.net/
 			var attributes = member.AttributeLists.Add(
 				AttributeList(SingletonSeparatedList(
 					Attribute(IdentifierName("MemoryLeakSafe"))
-						.WithArgumentList(AttributeArgumentList(
+						.WithArgumentList(
+							AttributeArgumentList(
 								SingletonSeparatedList(
 									AttributeArgument(
 										LiteralExpression(
@@ -98,11 +98,9 @@ namespace MemoryAnalyzers
 											Literal("Proven safe in test: XYZ"))))))
 				)));
 
-			var parent = member.Parent
-				.ReplaceNode(member, member.WithAttributeLists(attributes))
-				.NormalizeWhitespace();
-
-			return document.WithSyntaxRoot(root.ReplaceNode(member.Parent, parent)).Project.Solution;
+			return document.WithSyntaxRoot(
+					root.ReplaceNode(member, member.WithAttributeLists(attributes)))
+				.Project.Solution;
 		}
 	}
 }

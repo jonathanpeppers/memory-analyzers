@@ -7,7 +7,7 @@ MacCatalyst applications.
 
 Don't define `public` events in `NSObject` subclasses:
 
-```
+```csharp
 public class MyView : UIView
 {
     // NOPE!

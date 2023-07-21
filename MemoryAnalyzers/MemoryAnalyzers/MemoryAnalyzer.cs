@@ -11,11 +11,13 @@ namespace MemoryAnalyzers
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public class MemoryAnalyzer : DiagnosticAnalyzer
 	{
-		public const string DiagnosticId = "MemoryAnalyzers";
-		private const string Category = "Memory";
+		public const string MA0001 = "MA0001";
+		public const string MA0002 = "MA0002";
+		public const string MA0003 = "MA0003";
+		const string Category = "Memory";
 
 		static readonly DiagnosticDescriptor MA0001Rule = new(
-			"MA0001",
+			MA0001,
 			new LocalizableResourceString(nameof(Resources.MA0001Title),
 			Resources.ResourceManager, typeof(Resources)),
 			new LocalizableResourceString(nameof(Resources.MA0001MessageFormat),
@@ -27,7 +29,7 @@ namespace MemoryAnalyzers
 		);
 
 		static readonly DiagnosticDescriptor MA0002Rule = new(
-			"MA0002",
+			MA0002,
 			new LocalizableResourceString(nameof(Resources.MA0002Title),
 			Resources.ResourceManager, typeof(Resources)),
 			new LocalizableResourceString(nameof(Resources.MA0002MessageFormat),
@@ -39,7 +41,7 @@ namespace MemoryAnalyzers
 		);
 
 		static readonly DiagnosticDescriptor MA0003Rule = new(
-			"MA0003",
+			MA0003,
 			new LocalizableResourceString(nameof(Resources.MA0003Title),
 			Resources.ResourceManager, typeof(Resources)),
 			new LocalizableResourceString(nameof(Resources.MA0003MessageFormat),

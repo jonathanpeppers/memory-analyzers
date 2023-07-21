@@ -33,13 +33,45 @@ namespace MemoryAnalyzers.Test
 				TestCode = source,
 			};
 
+			AddTestCode(test.TestState);
+
+			test.ExpectedDiagnostics.AddRange(expected);
+			await test.RunAsync(CancellationToken.None);
+		}
+
+		/// <inheritdoc cref="CodeFixVerifier{TAnalyzer, TCodeFix, TTest, TVerifier}.VerifyCodeFixAsync(string, string)"/>
+		public static async Task VerifyCodeFixAsync(string source, string fixedSource)
+			=> await VerifyCodeFixAsync(source, DiagnosticResult.EmptyDiagnosticResults, fixedSource);
+
+		/// <inheritdoc cref="CodeFixVerifier{TAnalyzer, TCodeFix, TTest, TVerifier}.VerifyCodeFixAsync(string, DiagnosticResult, string)"/>
+		public static async Task VerifyCodeFixAsync(string source, DiagnosticResult expected, string fixedSource)
+			=> await VerifyCodeFixAsync(source, new[] { expected }, fixedSource);
+
+		/// <inheritdoc cref="CodeFixVerifier{TAnalyzer, TCodeFix, TTest, TVerifier}.VerifyCodeFixAsync(string, DiagnosticResult[], string)"/>
+		public static async Task VerifyCodeFixAsync(string source, DiagnosticResult[] expected, string fixedSource)
+		{
+			var test = new Test
+			{
+				TestCode = source,
+				FixedCode = fixedSource,
+			};
+
+			AddTestCode(test.TestState);
+			AddTestCode(test.FixedState);
+
+			test.ExpectedDiagnostics.AddRange(expected);
+			await test.RunAsync(CancellationToken.None);
+		}
+
+		static void AddTestCode(SolutionState testState)
+		{
 			// Global usings
-			test.TestState.Sources.Add("global using System;");
-			test.TestState.Sources.Add("global using Foundation;");
-			test.TestState.Sources.Add("global using UIKit;");
+			testState.Sources.Add("global using System;");
+			testState.Sources.Add("global using Foundation;");
+			testState.Sources.Add("global using UIKit;");
 
 			// [Safe*] attributes
-			test.TestState.Sources.Add("""
+			testState.Sources.Add("""
 				[AttributeUsage(AttributeTargets.Event | AttributeTargets.Field | AttributeTargets.Property)]
 				sealed class MemoryLeakSafeAttribute : Attribute
 				{
@@ -53,7 +85,7 @@ namespace MemoryAnalyzers.Test
 			""");
 
 			// Foundation.NSObject
-			test.TestState.Sources.Add("""
+			testState.Sources.Add("""
 				namespace Foundation;
 
 				[AttributeUsage(AttributeTargets.Class)]
@@ -77,36 +109,12 @@ namespace MemoryAnalyzers.Test
 			""");
 
 			// UIKit.UIView
-			test.TestState.Sources.Add("""
+			testState.Sources.Add("""
 				namespace UIKit;
 
 				[Register("UIView", isWrapper: true)]
 				class UIView : NSObject { }
 			""");
-
-			test.ExpectedDiagnostics.AddRange(expected);
-			await test.RunAsync(CancellationToken.None);
-		}
-
-		/// <inheritdoc cref="CodeFixVerifier{TAnalyzer, TCodeFix, TTest, TVerifier}.VerifyCodeFixAsync(string, string)"/>
-		public static async Task VerifyCodeFixAsync(string source, string fixedSource)
-			=> await VerifyCodeFixAsync(source, DiagnosticResult.EmptyDiagnosticResults, fixedSource);
-
-		/// <inheritdoc cref="CodeFixVerifier{TAnalyzer, TCodeFix, TTest, TVerifier}.VerifyCodeFixAsync(string, DiagnosticResult, string)"/>
-		public static async Task VerifyCodeFixAsync(string source, DiagnosticResult expected, string fixedSource)
-			=> await VerifyCodeFixAsync(source, new[] { expected }, fixedSource);
-
-		/// <inheritdoc cref="CodeFixVerifier{TAnalyzer, TCodeFix, TTest, TVerifier}.VerifyCodeFixAsync(string, DiagnosticResult[], string)"/>
-		public static async Task VerifyCodeFixAsync(string source, DiagnosticResult[] expected, string fixedSource)
-		{
-			var test = new Test
-			{
-				TestCode = source,
-				FixedCode = fixedSource,
-			};
-
-			test.ExpectedDiagnostics.AddRange(expected);
-			await test.RunAsync(CancellationToken.None);
 		}
 	}
 }

@@ -10,8 +10,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Rename;
-using Microsoft.CodeAnalysis.Text;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace MemoryAnalyzers
 {
@@ -20,7 +19,7 @@ namespace MemoryAnalyzers
 	{
 		public sealed override ImmutableArray<string> FixableDiagnosticIds
 		{
-			get { return ImmutableArray.Create(MemoryAnalyzer.DiagnosticId); }
+			get { return ImmutableArray.Create(MemoryAnalyzer.MA0001); }
 		}
 
 		public sealed override FixAllProvider GetFixAllProvider()
@@ -43,34 +42,40 @@ namespace MemoryAnalyzers
 			var parent = root.FindToken(diagnosticSpan.Start).Parent;
 			if (parent is null)
 				return;
-			//var declaration = parent.AncestorsAndSelf().OfType<TypeDeclarationSyntax>().First();
+
+			var declaration = parent.AncestorsAndSelf().OfType<EventFieldDeclarationSyntax>().First();
 
 			// Register a code action that will invoke the fix.
-			//context.RegisterCodeFix(
-			//	CodeAction.Create(
-			//		title: CodeFixResources.CodeFixTitle,
-			//		createChangedSolution: c => MakeUppercaseAsync(context.Document, declaration, c),
-			//		equivalenceKey: nameof(CodeFixResources.CodeFixTitle)),
-			//	diagnostic);
+			context.RegisterCodeFix(
+				CodeAction.Create(
+					title: CodeFixResources.MA0001Title,
+					createChangedSolution: c => MakeUppercaseAsync(context.Document, declaration, c),
+					equivalenceKey: nameof(CodeFixResources.MA0001Title)),
+				diagnostic);
 		}
 
-		//private async Task<Solution> MakeUppercaseAsync(Document document, TypeDeclarationSyntax typeDecl, CancellationToken cancellationToken)
-		//{
-		//	// Compute new uppercase name.
-		//	var identifierToken = typeDecl.Identifier;
-		//	var newName = identifierToken.Text.ToUpperInvariant();
+		async Task<Solution> MakeUppercaseAsync(Document document, EventFieldDeclarationSyntax @event, CancellationToken cancellationToken)
+		{
+			var root = await document.GetSyntaxRootAsync(cancellationToken);
+			if (root is null)
+				return document.Project.Solution;
 
-		//	// Get the symbol representing the type to be renamed.
-		//	var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
-		//	var typeSymbol = semanticModel.GetDeclaredSymbol(typeDecl, cancellationToken);
+			var attributes = @event.AttributeLists.Add(
+				AttributeList(SingletonSeparatedList(
+					Attribute(IdentifierName("MemoryLeakSafe"))
+						.WithArgumentList(AttributeArgumentList(
+								SingletonSeparatedList(
+									AttributeArgument(
+										LiteralExpression(
+											SyntaxKind.StringLiteralExpression,
+											Literal("Proven safe in test: XYZ"))))))
+				)));
 
-		//	// Produce a new solution that has all references to that type renamed, including the declaration.
-		//	var originalSolution = document.Project.Solution;
-		//	var optionSet = originalSolution.Workspace.Options;
-		//	var newSolution = await Renamer.RenameSymbolAsync(document.Project.Solution, typeSymbol, newName, optionSet, cancellationToken).ConfigureAwait(false);
-
-		//	// Return the new solution with the now-uppercase type name.
-		//	return newSolution;
-		//}
+			return document.WithSyntaxRoot(
+				root.ReplaceNode(
+					@event,
+					@event.WithAttributeLists(attributes).NormalizeWhitespace()
+				)).Project.Solution;
+		}
 	}
 }

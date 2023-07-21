@@ -15,6 +15,19 @@ namespace MemoryAnalyzers.Test
 			await VerifyCS.VerifyAnalyzerAsync("");
 		}
 
+		[TestMethod]
+		public async Task NotNSObject()
+		{
+			var test = """
+				class Foo
+				{
+					public event EventHandler {|#0:EventName|};
+				}
+			""";
+
+			await VerifyCS.VerifyAnalyzerAsync(test);
+		}
+
 		//Diagnostic and CodeFix both triggered and checked for
 		[TestMethod]
 		[Ignore("Code fix not implemented yet")]
@@ -58,13 +71,11 @@ namespace MemoryAnalyzers.Test
 		public async Task EventHandler()
 		{
 			var test = """
-                namespace ConsoleApplication1;
-
-                class Foo
-                {   
-                    public event EventHandler {|#0:EventName|};
-                }
-            """;
+				class Foo : NSObject
+				{
+					public event EventHandler {|#0:EventName|};
+				}
+			""";
 
 			var expected = VerifyCS.Diagnostic("MA0001").WithLocation(0).WithArguments("EventName");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
@@ -74,17 +85,48 @@ namespace MemoryAnalyzers.Test
 		public async Task SafeEventHandler()
 		{
 			var test = """
-                namespace ConsoleApplication1;
-
-                class Foo
-                {
-                    [SafeEvent("Event tested via MemoryTests.MyEvent")]
-                    public event EventHandler {|#0:EventName|};
-                }
-            """;
+				class Foo : NSObject
+				{
+					[SafeEvent("Event tested via MemoryTests.MyEvent")]
+					public event EventHandler {|#0:EventName|};
+				}
+			""";
 
 			// 0 warnings
 			await VerifyCS.VerifyAnalyzerAsync(test);
+		}
+
+		[TestMethod]
+		public async Task EventHandlerNamedArguments()
+		{
+			var test = """
+				[Register(Name = "UITextField", IsWrapper = true)]
+				class UITextField { }
+
+				class Foo : UITextField
+				{
+					public event EventHandler {|#0:EventName|};
+				}
+			""";
+
+			var expected = VerifyCS.Diagnostic("MA0001").WithLocation(0).WithArguments("EventName");
+			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+		}
+
+		[TestMethod]
+		public async Task MyView()
+		{
+			var test = """
+				class MyView : UIView { }
+
+				class Foo : MyView
+				{
+					public event EventHandler {|#0:EventName|};
+				}
+			""";
+
+			var expected = VerifyCS.Diagnostic("MA0001").WithLocation(0).WithArguments("EventName");
+			await VerifyCS.VerifyAnalyzerAsync(test, expected);
 		}
 	}
 }

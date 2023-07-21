@@ -61,7 +61,7 @@ namespace MemoryAnalyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to C# events can cause memory leaks..
+        ///   Looks up a localized string similar to C# events in NSObject subclasses can cause memory leaks..
         /// </summary>
         internal static string AnalyzerDescription {
             get {
@@ -70,7 +70,7 @@ namespace MemoryAnalyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Event &apos;{0}&apos; could cause memory leaks. Add the [SafeEvent] attribute with a justification as to why the event will not leak..
+        ///   Looks up a localized string similar to Event &apos;{0}&apos; could cause memory leaks in an NSObject subclass. Add the [SafeEvent] attribute with a justification as to why the event will not leak..
         /// </summary>
         internal static string AnalyzerMessageFormat {
             get {
@@ -79,7 +79,7 @@ namespace MemoryAnalyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to C# events can cause memory leaks.
+        ///   Looks up a localized string similar to C# events in NSObject subclasses can cause memory leaks.
         /// </summary>
         internal static string AnalyzerTitle {
             get {

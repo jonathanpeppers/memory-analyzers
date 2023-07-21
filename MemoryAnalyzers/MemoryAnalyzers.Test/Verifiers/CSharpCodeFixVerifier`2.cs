@@ -35,6 +35,8 @@ namespace MemoryAnalyzers.Test
 
 			// Global usings
 			test.TestState.Sources.Add("global using System;");
+			test.TestState.Sources.Add("global using Foundation;");
+			test.TestState.Sources.Add("global using UIKit;");
 
 			// [SafeEvent] attribute
 			test.TestState.Sources.Add("""
@@ -48,6 +50,38 @@ namespace MemoryAnalyzers.Test
 
 					public string Justification { get; private set; }
 				}
+			""");
+
+			// Foundation.NSObject
+			test.TestState.Sources.Add("""
+				namespace Foundation;
+
+				[AttributeUsage(AttributeTargets.Class)]
+				sealed class RegisterAttribute : Attribute
+				{
+					public string Name { get; set; }
+
+					public bool IsWrapper { get; set; }
+
+					public RegisterAttribute() { }
+
+					public RegisterAttribute(string name, bool isWrapper)
+					{
+						Name = name;
+						IsWrapper = isWrapper;
+					}
+				}
+
+				[Register("NSObject", isWrapper: true)]
+				class NSObject { }
+			""");
+
+			// UIKit.UIView
+			test.TestState.Sources.Add("""
+				namespace UIKit;
+
+				[Register("UIView", isWrapper: true)]
+				class UIView : NSObject { }
 			""");
 
 			test.ExpectedDiagnostics.AddRange(expected);

@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -30,9 +31,11 @@ namespace MemoryAnalyzers
 			context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Event);
 		}
 
-		private static void AnalyzeSymbol(SymbolAnalysisContext context)
+		static void AnalyzeSymbol(SymbolAnalysisContext context)
 		{
 			var symbol = context.Symbol;
+			if (!IsFromNSObjectSubclass(symbol.ContainingType))
+				return;
 
 			foreach (var attribute in symbol.GetAttributes())
 			{
@@ -43,6 +46,34 @@ namespace MemoryAnalyzers
 
 			var diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], symbol.Name);
 			context.ReportDiagnostic(diagnostic);
+		}
+
+		static bool IsFromNSObjectSubclass(INamedTypeSymbol type)
+		{
+			foreach (var attribute in type.GetAttributes())
+			{
+				if (attribute.AttributeClass is null)
+					continue;
+				if (attribute.AttributeClass.Name != "RegisterAttribute")
+					continue;
+
+				var ctorArgs = attribute.ConstructorArguments;
+				if (ctorArgs.Length == 2)
+				{
+					if (ctorArgs[1].Value is bool parameterValue && parameterValue)
+						return true;
+				}
+
+				var namedArgs = attribute.NamedArguments.FirstOrDefault(n => n.Key == "IsWrapper");
+				if (namedArgs.Value.Value is bool namedValue && namedValue)
+					return true;
+			}
+
+			var baseType = type.BaseType;
+			if (baseType is null)
+				return false;
+
+			return IsFromNSObjectSubclass(baseType);
 		}
 	}
 }

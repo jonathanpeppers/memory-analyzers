@@ -83,10 +83,10 @@ namespace MemoryAnalyzers
 				return;
 			if (HasMemoryLeakSafeAttribute(symbol))
 				return;
+			if (symbol.Type.IsValueType)
+				return;
 			if (symbol.Type.Name == "WeakReference" ||
 				symbol.Type.Name.StartsWith("WeakReference<", StringComparison.Ordinal))
-				return;
-			if (symbol.Type.IsValueType)
 				return;
 
 			context.ReportDiagnostic(Diagnostic.Create(MA0002Rule, symbol.Locations[0], symbol.Name));
@@ -98,10 +98,10 @@ namespace MemoryAnalyzers
 				return;
 			if (HasMemoryLeakSafeAttribute(symbol))
 				return;
+			if (symbol.Type.IsValueType)
+				return;
 			if (symbol.Type.Name == "WeakReference" ||
 				symbol.Type.Name.StartsWith("WeakReference<", StringComparison.Ordinal))
-				return;
-			if (symbol.Type.IsValueType)
 				return;
 
 			context.ReportDiagnostic(Diagnostic.Create(MA0002Rule, symbol.Locations[0], symbol.Name));

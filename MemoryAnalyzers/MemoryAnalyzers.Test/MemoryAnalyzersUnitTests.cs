@@ -331,5 +331,46 @@ namespace MemoryAnalyzers.Test
 
 			await VerifyCS.VerifyAnalyzerAsync(test);
 		}
+
+		[TestMethod]
+		public async Task SubscriptionMauiDatePicker()
+		{
+			var test = """
+				[Register("UIControl", true)]
+				class UIControl
+				{
+					[MemoryLeakSafe("Ignore for this test")]
+					public event EventHandler ValueChanged;
+				}
+
+				[Register("UITextField", true)]
+				class UITextField : UIControl
+				{
+				}
+
+				[Register("UIDatePicker", true)]
+				class UIDatePicker : UIControl
+				{
+				}
+
+				class NoCaretField : UITextField
+				{
+				}
+
+				class MauiDatePicker : NoCaretField
+				{
+					public MauiDatePicker()
+					{
+						var picker = new UIDatePicker();
+						picker.ValueChanged += {|#0:OnValueChanged|};
+					}
+
+					void OnValueChanged(object sender, EventArgs e) { }
+				}
+			""";
+
+			var expected = VerifyCS.Diagnostic("MA0003").WithLocation(0).WithArguments("OnValueChanged");
+			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+		}
 	}
 }

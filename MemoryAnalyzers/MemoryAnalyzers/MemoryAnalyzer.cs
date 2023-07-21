@@ -119,28 +119,14 @@ namespace MemoryAnalyzers
 			var rightInfo = context.SemanticModel.GetSymbolInfo(assignment.Right);
 			if (rightInfo.Symbol is not IMethodSymbol methodSymbol || methodSymbol.IsStatic)
 				return; // static methods are fine
-			var leftInfo = context.SemanticModel.GetSymbolInfo(assignment.Left);
-			if (leftInfo.Symbol is IEventSymbol eventSymbol && IsOwnedEvent(eventSymbol, methodSymbol))
-				return; // Subscribing to events you declare are fine
+
+			// Subscribing to events you declare are fine
+			if (assignment.Left is IdentifierNameSyntax)
+				return;
+			if (assignment.Left is MemberAccessExpressionSyntax m && m.Expression is ThisExpressionSyntax)
+				return;
+
 			context.ReportDiagnostic(Diagnostic.Create(MA0003Rule, assignment.Right.GetLocation(), methodSymbol.Name));
-		}
-
-		// Returns true, if the class is subscribing to its own event, or event from subclass
-		static bool IsOwnedEvent(IEventSymbol eventSymbol, IMethodSymbol methodSymbol)
-		{
-			if (SymbolEqualityComparer.Default.Equals(eventSymbol.ContainingSymbol, methodSymbol.ContainingSymbol))
-				return true;
-
-			var baseType = methodSymbol.ContainingType.BaseType;
-			while (baseType != null)
-			{
-				if (SymbolEqualityComparer.Default.Equals(eventSymbol.ContainingSymbol, baseType))
-					return true;
-
-				baseType = baseType.BaseType;
-			}
-
-			return false;
 		}
 
 		static bool HasMemoryLeakSafeAttribute(ISymbol symbol)

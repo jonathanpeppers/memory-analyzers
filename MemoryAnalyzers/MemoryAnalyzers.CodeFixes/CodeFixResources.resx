@@ -120,4 +120,7 @@
   <data name="AddMemoryLeakSafe" xml:space="preserve">
     <value>Add [MemoryLeakSafe] attribute</value>
   </data>
+  <data name="RemoveMember" xml:space="preserve">
+    <value>Remove the member</value>
+  </data>
 </root>

@@ -68,5 +68,14 @@ namespace MemoryAnalyzers {
                 return ResourceManager.GetString("AddMemoryLeakSafe", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove the member.
+        /// </summary>
+        internal static string RemoveMember {
+            get {
+                return ResourceManager.GetString("RemoveMember", resourceCulture);
+            }
+        }
     }
 }

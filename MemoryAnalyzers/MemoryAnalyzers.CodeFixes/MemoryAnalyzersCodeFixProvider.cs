@@ -44,6 +44,12 @@ namespace MemoryAnalyzers
 				var declaration = parent.AncestorsAndSelf().OfType<EventFieldDeclarationSyntax>().First();
 				context.RegisterCodeFix(
 					CodeAction.Create(
+						title: CodeFixResources.RemoveMember,
+						createChangedSolution: c => RemoveMember(context.Document, declaration, c),
+						equivalenceKey: nameof(CodeFixResources.RemoveMember)),
+					diagnostic);
+				context.RegisterCodeFix(
+					CodeAction.Create(
 						title: CodeFixResources.AddMemoryLeakSafe,
 						createChangedSolution: c => AddMemorySafeAttribute(context.Document, declaration, c),
 						equivalenceKey: nameof(CodeFixResources.AddMemoryLeakSafe)),
@@ -54,11 +60,25 @@ namespace MemoryAnalyzers
 				var declaration = parent.AncestorsAndSelf().OfType<MemberDeclarationSyntax>().First();
 				context.RegisterCodeFix(
 					CodeAction.Create(
+						title: CodeFixResources.RemoveMember,
+						createChangedSolution: c => RemoveMember(context.Document, declaration, c),
+						equivalenceKey: nameof(CodeFixResources.RemoveMember)),
+					diagnostic);
+				context.RegisterCodeFix(
+					CodeAction.Create(
 						title: CodeFixResources.AddMemoryLeakSafe,
 						createChangedSolution: c => AddMemorySafeAttribute(context.Document, declaration, c),
 						equivalenceKey: nameof(CodeFixResources.AddMemoryLeakSafe)),
 					diagnostic);
 			}
+		}
+
+		async Task<Solution> RemoveMember(Document document, MemberDeclarationSyntax member, CancellationToken cancellationToken)
+		{
+			var root = await document.GetSyntaxRootAsync(cancellationToken);
+			if (root is null)
+				return document.Project.Solution;
+			return document.WithSyntaxRoot(root.RemoveNode(member, SyntaxRemoveOptions.KeepLeadingTrivia | SyntaxRemoveOptions.KeepTrailingTrivia)!).Project.Solution;
 		}
 
 		async Task<Solution> AddMemorySafeAttribute(Document document, MemberDeclarationSyntax member, CancellationToken cancellationToken)

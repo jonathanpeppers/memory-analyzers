@@ -25,7 +25,6 @@ namespace MemoryAnalyzers.Test
 			    
 			}
 			""";
-			;
 
 			var expected = VerifyCS.Diagnostic("MA0001").WithLocation(0).WithArguments("EventName");
 			await VerifyCS.VerifyCodeFixAsync(test, expected, codefix, index: 0);
@@ -69,7 +68,6 @@ namespace MemoryAnalyzers.Test
 			    
 			}
 			""";
-			;
 
 			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("FieldName");
 			await VerifyCS.VerifyCodeFixAsync(test, expected, codefix, index: 0);
@@ -92,7 +90,6 @@ namespace MemoryAnalyzers.Test
 			    public UIView {|#0:FieldName|};
 			}
 			""";
-			;
 
 			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("FieldName");
 			await VerifyCS.VerifyCodeFixAsync(test, expected, codefix, index: 1);

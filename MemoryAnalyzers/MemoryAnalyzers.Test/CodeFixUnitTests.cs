@@ -94,5 +94,54 @@ namespace MemoryAnalyzers.Test
 			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("FieldName");
 			await VerifyCS.VerifyCodeFixAsync(test, expected, codefix, index: 1);
 		}
+
+		[TestMethod]
+		public async Task MA0003_Remove()
+		{
+			var test = """
+			[Register("UITextField", true)]
+			class UITextField
+			{
+			    [MemoryLeakSafe("Ignore for this test")]
+			    public event EventHandler EditingDidBegin;
+			}
+
+			class Foo : NSObject
+			{
+			    public Foo()
+			    {
+			        new UITextField().EditingDidBegin += {|#0:OnEditingDidBegin|};
+			    }
+
+			    void OnEditingDidBegin(object sender, EventArgs e)
+			    {
+			    }
+			}
+			""";
+
+			var codefix = """
+			[Register("UITextField", true)]
+			class UITextField
+			{
+			    [MemoryLeakSafe("Ignore for this test")]
+			    public event EventHandler EditingDidBegin;
+			}
+
+			class Foo : NSObject
+			{
+			    public Foo()
+			    {
+			        new UITextField().EditingDidBegin += {|#0:OnEditingDidBegin|};
+			    }
+
+			    void OnEditingDidBegin(object sender, EventArgs e)
+			    {
+			    }
+			}
+			""";
+
+			var expected = VerifyCS.Diagnostic("MA0003").WithLocation(0).WithArguments("OnEditingDidBegin");
+			await VerifyCS.VerifyCodeFixAsync(test, expected, codefix, index: 0);
+		}
 	}
 }

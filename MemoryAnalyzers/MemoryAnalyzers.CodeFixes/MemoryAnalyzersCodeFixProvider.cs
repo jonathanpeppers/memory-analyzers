@@ -17,7 +17,7 @@ namespace MemoryAnalyzers
 	{
 		public sealed override ImmutableArray<string> FixableDiagnosticIds
 		{
-			get { return ImmutableArray.Create(MemoryAnalyzer.MA0001, MemoryAnalyzer.MA0002); }
+			get { return ImmutableArray.Create(MemoryAnalyzer.MA0001, MemoryAnalyzer.MA0002, MemoryAnalyzer.MA0003); }
 		}
 
 		public sealed override FixAllProvider GetFixAllProvider()
@@ -69,14 +69,26 @@ namespace MemoryAnalyzers
 						equivalenceKey: nameof(CodeFixResources.AddMemoryLeakSafe)),
 					diagnostic);
 			}
+			else if (diagnostic.Id == MemoryAnalyzer.MA0003)
+			{
+				var declaration = parent.AncestorsAndSelf().OfType<AssignmentExpressionSyntax>().First();
+				if (declaration.Parent is null)
+					return;
+				context.RegisterCodeFix(
+					CodeAction.Create(
+						title: CodeFixResources.RemoveMember,
+						createChangedSolution: c => RemoveMember(context.Document, declaration.Parent, c),
+						equivalenceKey: nameof(CodeFixResources.RemoveMember)),
+					diagnostic);
+			}
 		}
 
-		async Task<Solution> RemoveMember(Document document, MemberDeclarationSyntax member, CancellationToken cancellationToken)
+		async Task<Solution> RemoveMember(Document document, SyntaxNode node, CancellationToken cancellationToken)
 		{
 			var root = await document.GetSyntaxRootAsync(cancellationToken);
 			if (root is null)
 				return document.Project.Solution;
-			return document.WithSyntaxRoot(root.RemoveNode(member, SyntaxRemoveOptions.KeepLeadingTrivia | SyntaxRemoveOptions.KeepTrailingTrivia)!).Project.Solution;
+			return document.WithSyntaxRoot(root.RemoveNode(node, SyntaxRemoveOptions.KeepLeadingTrivia | SyntaxRemoveOptions.KeepTrailingTrivia)!).Project.Solution;
 		}
 
 		async Task<Solution> AddMemorySafeAttribute(Document document, MemberDeclarationSyntax member, CancellationToken cancellationToken)

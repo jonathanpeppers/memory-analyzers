@@ -96,6 +96,48 @@ namespace MemoryAnalyzers.Test
 		}
 
 		[TestMethod]
+		public async Task MA0002_MakeWeak_Field()
+		{
+			var test = """
+			class Foo : NSObject
+			{
+			    public UIView {|#0:FieldName|};
+			}
+			""";
+
+			var codefix = """
+			class Foo : NSObject
+			{
+			    public WeakReference<UIView> {|#0:FieldName|};
+			}
+			""";
+
+			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("FieldName");
+			await VerifyCS.VerifyCodeFixAsync(test, expected, codefix, index: 2);
+		}
+
+		[TestMethod]
+		public async Task MA0002_MakeWeak_Property()
+		{
+			var test = """
+			class Foo : NSObject
+			{
+			    public UIView {|#0:FieldName|} { get; set; }
+			}
+			""";
+
+			var codefix = """
+			class Foo : NSObject
+			{
+			    public WeakReference<UIView> {|#0:FieldName|} { get; set; }
+			}
+			""";
+
+			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("FieldName");
+			await VerifyCS.VerifyCodeFixAsync(test, expected, codefix, index: 2);
+		}
+
+		[TestMethod]
 		public async Task MA0003_Remove()
 		{
 			var test = """

@@ -68,6 +68,12 @@ namespace MemoryAnalyzers
 						createChangedSolution: c => AddUnconditionalSuppressMessage(diagnostic, context.Document, declaration, c),
 						equivalenceKey: nameof(CodeFixResources.AddUnconditionalSuppressMessage)),
 					diagnostic);
+				context.RegisterCodeFix(
+					CodeAction.Create(
+						title: CodeFixResources.MakeWeak,
+						createChangedSolution: c => MakeWeakReference(diagnostic, context.Document, declaration, c),
+						equivalenceKey: nameof(CodeFixResources.MakeWeak)),
+					diagnostic);
 			}
 			else if (diagnostic.Id == MemoryAnalyzer.MA0003)
 			{
@@ -134,6 +140,41 @@ namespace MemoryAnalyzers
 			return document.WithSyntaxRoot(
 					root.ReplaceNode(member, member.WithAttributeLists(attributes)))
 				.Project.Solution;
+		}
+
+		async Task<Solution> MakeWeakReference(Diagnostic diagnostic, Document document, MemberDeclarationSyntax member, CancellationToken cancellationToken)
+		{
+			var root = await document.GetSyntaxRootAsync(cancellationToken);
+			if (root is not null)
+			{
+				if (member is PropertyDeclarationSyntax property)
+				{
+					return document.WithSyntaxRoot(
+						root.ReplaceNode(member,
+							property.WithType(
+								GenericName(
+									Identifier("WeakReference"))
+										.WithTypeArgumentList(
+											TypeArgumentList(
+												SingletonSeparatedList(property.Type)))))
+						)
+					.Project.Solution;
+				}
+				else if (member is FieldDeclarationSyntax field)
+				{
+					return document.WithSyntaxRoot(
+						root.ReplaceNode(field.Declaration,
+							field.Declaration.WithType(
+								GenericName(
+									Identifier("WeakReference"))
+										.WithTypeArgumentList(
+											TypeArgumentList(
+												SingletonSeparatedList(field.Declaration.Type)))))
+						)
+					.Project.Solution;
+				}
+			}
+			return document.Project.Solution;
 		}
 
 		async Task<Solution> MakeStatic(Document document, AssignmentExpressionSyntax assignment, CancellationToken cancellationToken)

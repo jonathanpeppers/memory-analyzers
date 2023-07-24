@@ -79,6 +79,15 @@ namespace MemoryAnalyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Make the member type a WeakReference.
+        /// </summary>
+        internal static string MakeWeak {
+            get {
+                return ResourceManager.GetString("MakeWeak", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove the expression.
         /// </summary>
         internal static string RemoveExpression {

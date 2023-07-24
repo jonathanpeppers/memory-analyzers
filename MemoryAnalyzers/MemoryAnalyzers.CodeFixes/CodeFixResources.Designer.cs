@@ -61,11 +61,11 @@ namespace MemoryAnalyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add [MemoryLeakSafe] attribute.
+        ///   Looks up a localized string similar to Add [UnconditionalSuppressMessage] attribute.
         /// </summary>
-        internal static string AddMemoryLeakSafe {
+        internal static string AddUnconditionalSuppressMessage {
             get {
-                return ResourceManager.GetString("AddMemoryLeakSafe", resourceCulture);
+                return ResourceManager.GetString("AddUnconditionalSuppressMessage", resourceCulture);
             }
         }
         

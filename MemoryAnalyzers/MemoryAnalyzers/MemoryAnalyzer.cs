@@ -74,7 +74,7 @@ namespace MemoryAnalyzers
 				return;
 			if (!IsFromNSObjectSubclass(symbol.ContainingType))
 				return;
-			if (HasMemoryLeakSafeAttribute(symbol))
+			if (HasUnconditionalSuppressMessage(symbol, MA0001))
 				return;
 
 			context.ReportDiagnostic(Diagnostic.Create(MA0001Rule, symbol.Locations[0], symbol.Name));
@@ -84,7 +84,7 @@ namespace MemoryAnalyzers
 		{
 			if (context.ContainingSymbol is not IFieldSymbol symbol || !IsFromNSObjectSubclass(symbol.ContainingType))
 				return;
-			if (HasMemoryLeakSafeAttribute(symbol))
+			if (HasUnconditionalSuppressMessage(symbol, MA0002))
 				return;
 			if (symbol.Type.IsValueType)
 				return;
@@ -99,7 +99,7 @@ namespace MemoryAnalyzers
 		{
 			if (context.ContainingSymbol is not IPropertySymbol symbol || !IsFromNSObjectSubclass(symbol.ContainingType))
 				return;
-			if (HasMemoryLeakSafeAttribute(symbol))
+			if (HasUnconditionalSuppressMessage(symbol, MA0002))
 				return;
 			if (symbol.Type.IsValueType)
 				return;
@@ -131,12 +131,22 @@ namespace MemoryAnalyzers
 			context.ReportDiagnostic(Diagnostic.Create(MA0003Rule, assignment.Right.GetLocation(), methodSymbol.Name));
 		}
 
-		static bool HasMemoryLeakSafeAttribute(ISymbol symbol)
+		static bool HasUnconditionalSuppressMessage(ISymbol symbol, string expectedCode)
 		{
 			foreach (var attribute in symbol.GetAttributes())
 			{
-				if (attribute.AttributeClass?.Name == "MemoryLeakSafeAttribute")
-					return true;
+				if (attribute.AttributeClass?.Name == "UnconditionalSuppressMessageAttribute")
+				{
+					var ctorArgs = attribute.ConstructorArguments;
+					if (ctorArgs.Length == 2)
+					{
+						return ctorArgs[1].Value as string == expectedCode;
+					}
+
+					// This only has a single 2-argument constructor, but let's keep this logic in case it ever changes
+					var namedArgs = attribute.NamedArguments.FirstOrDefault(n => n.Key == "CheckId");
+					return namedArgs.Value.Value as string == expectedCode;
+				}
 			}
 			return false;
 		}

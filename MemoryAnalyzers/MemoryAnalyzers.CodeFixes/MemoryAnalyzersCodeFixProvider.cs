@@ -48,9 +48,9 @@ namespace MemoryAnalyzers
 					diagnostic);
 				context.RegisterCodeFix(
 					CodeAction.Create(
-						title: CodeFixResources.AddMemoryLeakSafe,
-						createChangedSolution: c => AddMemorySafeAttribute(context.Document, declaration, c),
-						equivalenceKey: nameof(CodeFixResources.AddMemoryLeakSafe)),
+						title: CodeFixResources.AddUnconditionalSuppressMessage,
+						createChangedSolution: c => AddMemorySafeAttribute(diagnostic, context.Document, declaration, c),
+						equivalenceKey: nameof(CodeFixResources.AddUnconditionalSuppressMessage)),
 					diagnostic);
 			}
 			else if (diagnostic.Id == MemoryAnalyzer.MA0002)
@@ -64,9 +64,9 @@ namespace MemoryAnalyzers
 					diagnostic);
 				context.RegisterCodeFix(
 					CodeAction.Create(
-						title: CodeFixResources.AddMemoryLeakSafe,
-						createChangedSolution: c => AddMemorySafeAttribute(context.Document, declaration, c),
-						equivalenceKey: nameof(CodeFixResources.AddMemoryLeakSafe)),
+						title: CodeFixResources.AddUnconditionalSuppressMessage,
+						createChangedSolution: c => AddMemorySafeAttribute(diagnostic, context.Document, declaration, c),
+						equivalenceKey: nameof(CodeFixResources.AddUnconditionalSuppressMessage)),
 					diagnostic);
 			}
 			else if (diagnostic.Id == MemoryAnalyzer.MA0003)
@@ -91,7 +91,7 @@ namespace MemoryAnalyzers
 			return document.WithSyntaxRoot(root.RemoveNode(node, SyntaxRemoveOptions.KeepLeadingTrivia | SyntaxRemoveOptions.KeepTrailingTrivia)!).Project.Solution;
 		}
 
-		async Task<Solution> AddMemorySafeAttribute(Document document, MemberDeclarationSyntax member, CancellationToken cancellationToken)
+		async Task<Solution> AddMemorySafeAttribute(Diagnostic diagnostic, Document document, MemberDeclarationSyntax member, CancellationToken cancellationToken)
 		{
 			var root = await document.GetSyntaxRootAsync(cancellationToken);
 			if (root is null || member.Parent is null)
@@ -100,14 +100,29 @@ namespace MemoryAnalyzers
 			// Used: http://roslynquoter.azurewebsites.net/
 			var attributes = member.AttributeLists.Add(
 				AttributeList(SingletonSeparatedList(
-					Attribute(IdentifierName("MemoryLeakSafe"))
+					Attribute(
+						IdentifierName("UnconditionalSuppressMessage"))
 						.WithArgumentList(
 							AttributeArgumentList(
-								SingletonSeparatedList(
-									AttributeArgument(
-										LiteralExpression(
-											SyntaxKind.StringLiteralExpression,
-											Literal("Proven safe in test: XYZ"))))))
+								SeparatedList<AttributeArgumentSyntax>(
+									new SyntaxNodeOrToken[]{
+										AttributeArgument(
+											LiteralExpression(
+												SyntaxKind.StringLiteralExpression,
+												Literal("Memory"))),
+										Token(SyntaxKind.CommaToken),
+										AttributeArgument(
+											LiteralExpression(
+												SyntaxKind.StringLiteralExpression,
+												Literal(diagnostic.Id))),
+										Token(SyntaxKind.CommaToken),
+										AttributeArgument(
+											LiteralExpression(
+												SyntaxKind.StringLiteralExpression,
+												Literal("Proven safe in test: XYZ")))
+										.WithNameEquals(
+											NameEquals(
+												IdentifierName("Justification")))})))
 				)));
 
 			return document.WithSyntaxRoot(

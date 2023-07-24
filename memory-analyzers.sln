@@ -3,15 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.33906.173
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryAnalyzers", "MemoryAnalyzers\MemoryAnalyzers\MemoryAnalyzers.csproj", "{CFB5BD83-845D-4C72-BB4E-84A3009779D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemoryAnalyzers", "MemoryAnalyzers\MemoryAnalyzers\MemoryAnalyzers.csproj", "{CFB5BD83-845D-4C72-BB4E-84A3009779D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryAnalyzers.CodeFixes", "MemoryAnalyzers\MemoryAnalyzers.CodeFixes\MemoryAnalyzers.CodeFixes.csproj", "{2C7B22CE-BD1B-4BCC-BE6B-FF8BFEF7EE1F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemoryAnalyzers.CodeFixes", "MemoryAnalyzers\MemoryAnalyzers.CodeFixes\MemoryAnalyzers.CodeFixes.csproj", "{2C7B22CE-BD1B-4BCC-BE6B-FF8BFEF7EE1F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryAnalyzers.Package", "MemoryAnalyzers\MemoryAnalyzers.Package\MemoryAnalyzers.Package.csproj", "{ABEAAE09-53F1-4C8C-9322-25F41FD08B6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemoryAnalyzers.Package", "MemoryAnalyzers\MemoryAnalyzers.Package\MemoryAnalyzers.Package.csproj", "{ABEAAE09-53F1-4C8C-9322-25F41FD08B6F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryAnalyzers.Test", "MemoryAnalyzers\MemoryAnalyzers.Test\MemoryAnalyzers.Test.csproj", "{2FB88150-84A0-463C-A067-DED2B7545921}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryAnalyzers.Attributes", "MemoryAnalyzers\MemoryAnalyzers.Attributes\MemoryAnalyzers.Attributes.csproj", "{99FF3A89-C5FE-48A9-979F-D47584573F1F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemoryAnalyzers.Test", "MemoryAnalyzers\MemoryAnalyzers.Test\MemoryAnalyzers.Test.csproj", "{2FB88150-84A0-463C-A067-DED2B7545921}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +33,6 @@ Global
 		{2FB88150-84A0-463C-A067-DED2B7545921}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FB88150-84A0-463C-A067-DED2B7545921}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FB88150-84A0-463C-A067-DED2B7545921}.Release|Any CPU.Build.0 = Release|Any CPU
-		{99FF3A89-C5FE-48A9-979F-D47584573F1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{99FF3A89-C5FE-48A9-979F-D47584573F1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{99FF3A89-C5FE-48A9-979F-D47584573F1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{99FF3A89-C5FE-48A9-979F-D47584573F1F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

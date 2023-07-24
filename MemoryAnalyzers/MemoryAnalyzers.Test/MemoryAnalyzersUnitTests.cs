@@ -43,18 +43,48 @@ namespace MemoryAnalyzers.Test
 		}
 
 		[TestMethod]
-		public async Task SafeEvent()
+		public async Task UnconditionalSuppressMessage_MA0001()
 		{
 			var test = """
 				class Foo : NSObject
 				{
-					[MemoryLeakSafe("Event tested via MemoryTests.MyEvent")]
+					[UnconditionalSuppressMessage("Memory", "MA0001")]
 					public event EventHandler {|#0:EventName|};
 				}
 			""";
 
 			// 0 warnings
 			await VerifyCS.VerifyAnalyzerAsync(test);
+		}
+
+		[TestMethod]
+		public async Task UnconditionalSuppressMessage_MA0001_Justification()
+		{
+			var test = """
+				class Foo : NSObject
+				{
+					[UnconditionalSuppressMessage("Memory", "MA0001", Justification = "I know what I'm doing! LOL?")]
+					public event EventHandler {|#0:EventName|};
+				}
+			""";
+
+			// 0 warnings
+			await VerifyCS.VerifyAnalyzerAsync(test);
+		}
+
+		[TestMethod]
+		public async Task UnconditionalSuppressMessage_WrongCode()
+		{
+			var test = """
+				class Foo : NSObject
+				{
+					[UnconditionalSuppressMessage("Memory", "ABC1234")]
+					public event EventHandler {|#0:EventName|};
+				}
+			""";
+
+			var expected = VerifyCS.Diagnostic("MA0001").WithLocation(0).WithArguments("EventName");
+			await VerifyCS.VerifyAnalyzerAsync(test, expected);
 		}
 
 		[TestMethod]
@@ -134,12 +164,12 @@ namespace MemoryAnalyzers.Test
 		}
 
 		[TestMethod]
-		public async Task SafeField()
+		public async Task UnconditionalSuppressMessage_MA0002_Field()
 		{
 			var test = """
 				class MyViewSubclass : UIView
 				{
-					[MemoryLeakSafe("Field tested via MemoryTests.MyField")]
+					[UnconditionalSuppressMessage("Memory", "MA0002")]
 					public UIView {|#0:FieldName|};
 				}
 			""";
@@ -182,12 +212,12 @@ namespace MemoryAnalyzers.Test
 		}
 
 		[TestMethod]
-		public async Task SafeProperty()
+		public async Task UnconditionalSuppressMessage_MA0002_Property()
 		{
 			var test = """
 				class MyViewSubclass : UIView
 				{
-					[MemoryLeakSafe("Property tested via MemoryTests.MyProperty")]
+					[UnconditionalSuppressMessage("Memory", "MA0002")]
 					public UIView {|#0:FieldName|} { get; set; }
 				}
 			""";
@@ -202,7 +232,7 @@ namespace MemoryAnalyzers.Test
 				[Register(Name = "UITextField", IsWrapper = true)]
 				class UITextField
 				{
-					[MemoryLeakSafe("Ignore for this test")]
+					[UnconditionalSuppressMessage("Memory", "MA0001")]
 					public event EventHandler EditingDidBegin;
 				}
 
@@ -228,7 +258,7 @@ namespace MemoryAnalyzers.Test
 				[Register(Name = "UITextField", IsWrapper = true)]
 				class UITextField
 				{
-					[MemoryLeakSafe("Ignore for this test")]
+					[UnconditionalSuppressMessage("Memory", "MA0001")]
 					public event EventHandler EditingDidBegin;
 				}
 
@@ -255,19 +285,19 @@ namespace MemoryAnalyzers.Test
 				[Register(Name = "UITextField", IsWrapper = true)]
 				class UITextField
 				{
-					[MemoryLeakSafe("Ignore for this test")]
+					[UnconditionalSuppressMessage("Memory", "MA0001")]
 					public event EventHandler EditingDidBegin;
 				}
 
 				class MySubclass : UIView
 				{
-					[MemoryLeakSafe("Ignore for this test")]
+					[UnconditionalSuppressMessage("Memory", "MA0001")]
 					public event EventHandler InheritedEvent;
 				}
 
 				class MyView : MySubclass
 				{
-					[MemoryLeakSafe("Ignore for this test")]
+					[UnconditionalSuppressMessage("Memory", "MA0001")]
 					public event EventHandler MyOwnedEvent;
 
 					event EventHandler MyPrivateEvent;
@@ -300,7 +330,7 @@ namespace MemoryAnalyzers.Test
 				[Register("UIControl", true)]
 				class UIControl
 				{
-					[MemoryLeakSafe("Ignore for this test")]
+					[UnconditionalSuppressMessage("Memory", "MA0001")]
 					public event EventHandler ValueChanged;
 				}
 

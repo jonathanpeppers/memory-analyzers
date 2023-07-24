@@ -68,20 +68,28 @@ namespace MemoryAnalyzers.Test
 		{
 			// Global usings
 			testState.Sources.Add("global using System;");
+			testState.Sources.Add("global using System.Diagnostics.CodeAnalysis;");
 			testState.Sources.Add("global using Foundation;");
 			testState.Sources.Add("global using UIKit;");
 
-			// [Safe*] attributes
+			// [UnconditionalSuppressMessage]
 			testState.Sources.Add("""
-				[AttributeUsage(AttributeTargets.Event | AttributeTargets.Field | AttributeTargets.Property)]
-				sealed class MemoryLeakSafeAttribute : Attribute
+				namespace System.Diagnostics.CodeAnalysis;
+
+				[AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = true)]
+				sealed class UnconditionalSuppressMessageAttribute : Attribute
 				{
-					public MemoryLeakSafeAttribute(string justification)
+					public UnconditionalSuppressMessageAttribute(string category, string checkId)
 					{
-						Justification = justification;
+						Category = category;
+						CheckId = checkId;
 					}
 
-					public string Justification { get; private set; }
+					public string Category { get; }
+
+					public string CheckId { get; }
+
+					public string Justification { get; set; }
 				}
 			""");
 

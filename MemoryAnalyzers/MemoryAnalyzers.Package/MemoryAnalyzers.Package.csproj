@@ -19,7 +19,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MemoryAnalyzers.Attributes\MemoryAnalyzers.Attributes.csproj" />
     <ProjectReference Include="..\MemoryAnalyzers.CodeFixes\MemoryAnalyzers.CodeFixes.csproj" />
     <ProjectReference Include="..\MemoryAnalyzers\MemoryAnalyzers.csproj" />
   </ItemGroup>
@@ -34,7 +33,6 @@
     <ItemGroup>
       <TfmSpecificPackageFile Include="$(OutputPath)\MemoryAnalyzers.dll" PackagePath="analyzers/dotnet/cs" />
       <TfmSpecificPackageFile Include="$(OutputPath)\MemoryAnalyzers.CodeFixes.dll" PackagePath="analyzers/dotnet/cs" />
-      <TfmSpecificPackageFile Include="$(OutputPath)\MemoryAnalyzers.Attributes.dll" PackagePath="lib/netstandard2.0" />
     </ItemGroup>
   </Target>
 

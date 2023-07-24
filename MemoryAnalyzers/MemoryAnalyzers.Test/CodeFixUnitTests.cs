@@ -31,7 +31,7 @@ namespace MemoryAnalyzers.Test
 		}
 
 		[TestMethod]
-		public async Task MA0001_MemoryLeakSafe()
+		public async Task MA0001_UnconditionalSuppressMessage()
 		{
 			var test = """
 			class Foo : NSObject
@@ -43,7 +43,7 @@ namespace MemoryAnalyzers.Test
 			var codefix = """
 			class Foo : NSObject
 			{
-			    [MemoryLeakSafe("Proven safe in test: XYZ")]
+			    [UnconditionalSuppressMessage("Memory", "MA0001", Justification = "Proven safe in test: XYZ")]
 			    public event EventHandler {|#0:EventName|};
 			}
 			""";
@@ -74,7 +74,7 @@ namespace MemoryAnalyzers.Test
 		}
 
 		[TestMethod]
-		public async Task MA0002_MemoryLeakSafe()
+		public async Task MA0002_UnconditionalSuppressMessage()
 		{
 			var test = """
 			class Foo : NSObject
@@ -86,7 +86,7 @@ namespace MemoryAnalyzers.Test
 			var codefix = """
 			class Foo : NSObject
 			{
-			    [MemoryLeakSafe("Proven safe in test: XYZ")]
+			    [UnconditionalSuppressMessage("Memory", "MA0002", Justification = "Proven safe in test: XYZ")]
 			    public UIView {|#0:FieldName|};
 			}
 			""";
@@ -102,7 +102,7 @@ namespace MemoryAnalyzers.Test
 			[Register("UITextField", true)]
 			class UITextField
 			{
-			    [MemoryLeakSafe("Ignore for this test")]
+			    [UnconditionalSuppressMessage("Memory", "MA0001")]
 			    public event EventHandler EditingDidBegin;
 			}
 
@@ -123,7 +123,7 @@ namespace MemoryAnalyzers.Test
 			[Register("UITextField", true)]
 			class UITextField
 			{
-			    [MemoryLeakSafe("Ignore for this test")]
+			    [UnconditionalSuppressMessage("Memory", "MA0001")]
 			    public event EventHandler EditingDidBegin;
 			}
 

@@ -49,7 +49,7 @@ namespace MemoryAnalyzers
 				context.RegisterCodeFix(
 					CodeAction.Create(
 						title: CodeFixResources.AddUnconditionalSuppressMessage,
-						createChangedSolution: c => AddMemorySafeAttribute(diagnostic, context.Document, declaration, c),
+						createChangedSolution: c => AddUnconditionalSuppressMessage(diagnostic, context.Document, declaration, c),
 						equivalenceKey: nameof(CodeFixResources.AddUnconditionalSuppressMessage)),
 					diagnostic);
 			}
@@ -65,7 +65,7 @@ namespace MemoryAnalyzers
 				context.RegisterCodeFix(
 					CodeAction.Create(
 						title: CodeFixResources.AddUnconditionalSuppressMessage,
-						createChangedSolution: c => AddMemorySafeAttribute(diagnostic, context.Document, declaration, c),
+						createChangedSolution: c => AddUnconditionalSuppressMessage(diagnostic, context.Document, declaration, c),
 						equivalenceKey: nameof(CodeFixResources.AddUnconditionalSuppressMessage)),
 					diagnostic);
 			}
@@ -97,7 +97,7 @@ namespace MemoryAnalyzers
 			return document.WithSyntaxRoot(root.RemoveNode(node, SyntaxRemoveOptions.KeepLeadingTrivia | SyntaxRemoveOptions.KeepTrailingTrivia)!).Project.Solution;
 		}
 
-		async Task<Solution> AddMemorySafeAttribute(Diagnostic diagnostic, Document document, MemberDeclarationSyntax member, CancellationToken cancellationToken)
+		async Task<Solution> AddUnconditionalSuppressMessage(Diagnostic diagnostic, Document document, MemberDeclarationSyntax member, CancellationToken cancellationToken)
 		{
 			var root = await document.GetSyntaxRootAsync(cancellationToken);
 			if (root is null || member.Parent is null)

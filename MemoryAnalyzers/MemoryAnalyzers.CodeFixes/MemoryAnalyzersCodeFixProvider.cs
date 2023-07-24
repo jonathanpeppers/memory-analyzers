@@ -42,9 +42,9 @@ namespace MemoryAnalyzers
 				var declaration = parent.AncestorsAndSelf().OfType<EventFieldDeclarationSyntax>().First();
 				context.RegisterCodeFix(
 					CodeAction.Create(
-						title: CodeFixResources.RemoveMember,
+						title: CodeFixResources.RemoveExpression,
 						createChangedSolution: c => RemoveMember(context.Document, declaration, c),
-						equivalenceKey: nameof(CodeFixResources.RemoveMember)),
+						equivalenceKey: nameof(CodeFixResources.RemoveExpression)),
 					diagnostic);
 				context.RegisterCodeFix(
 					CodeAction.Create(
@@ -58,9 +58,9 @@ namespace MemoryAnalyzers
 				var declaration = parent.AncestorsAndSelf().OfType<MemberDeclarationSyntax>().First();
 				context.RegisterCodeFix(
 					CodeAction.Create(
-						title: CodeFixResources.RemoveMember,
+						title: CodeFixResources.RemoveExpression,
 						createChangedSolution: c => RemoveMember(context.Document, declaration, c),
-						equivalenceKey: nameof(CodeFixResources.RemoveMember)),
+						equivalenceKey: nameof(CodeFixResources.RemoveExpression)),
 					diagnostic);
 				context.RegisterCodeFix(
 					CodeAction.Create(
@@ -76,9 +76,9 @@ namespace MemoryAnalyzers
 					return;
 				context.RegisterCodeFix(
 					CodeAction.Create(
-						title: CodeFixResources.RemoveMember,
+						title: CodeFixResources.RemoveExpression,
 						createChangedSolution: c => RemoveMember(context.Document, declaration.Parent, c),
-						equivalenceKey: nameof(CodeFixResources.RemoveMember)),
+						equivalenceKey: nameof(CodeFixResources.RemoveExpression)),
 					diagnostic);
 			}
 		}

@@ -70,11 +70,11 @@ namespace MemoryAnalyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove the member.
+        ///   Looks up a localized string similar to Remove the expression.
         /// </summary>
-        internal static string RemoveMember {
+        internal static string RemoveExpression {
             get {
-                return ResourceManager.GetString("RemoveMember", resourceCulture);
+                return ResourceManager.GetString("RemoveExpression", resourceCulture);
             }
         }
     }

@@ -70,6 +70,15 @@ namespace MemoryAnalyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Make the method static.
+        /// </summary>
+        internal static string MakeStatic {
+            get {
+                return ResourceManager.GetString("MakeStatic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove the expression.
         /// </summary>
         internal static string RemoveExpression {

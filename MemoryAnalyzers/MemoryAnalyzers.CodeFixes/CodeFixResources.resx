@@ -120,6 +120,9 @@
   <data name="AddUnconditionalSuppressMessage" xml:space="preserve">
     <value>Add [UnconditionalSuppressMessage] attribute</value>
   </data>
+  <data name="MakeStatic" xml:space="preserve">
+    <value>Make the method static</value>
+  </data>
   <data name="RemoveExpression" xml:space="preserve">
     <value>Remove the expression</value>
   </data>

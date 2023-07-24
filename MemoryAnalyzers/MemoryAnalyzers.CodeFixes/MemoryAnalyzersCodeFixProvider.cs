@@ -80,6 +80,12 @@ namespace MemoryAnalyzers
 						createChangedSolution: c => RemoveMember(context.Document, declaration.Parent, c),
 						equivalenceKey: nameof(CodeFixResources.RemoveExpression)),
 					diagnostic);
+				context.RegisterCodeFix(
+					CodeAction.Create(
+						title: CodeFixResources.MakeStatic,
+						createChangedSolution: c => MakeStatic(context.Document, declaration, c),
+						equivalenceKey: nameof(CodeFixResources.MakeStatic)),
+					diagnostic);
 			}
 		}
 
@@ -128,6 +134,31 @@ namespace MemoryAnalyzers
 			return document.WithSyntaxRoot(
 					root.ReplaceNode(member, member.WithAttributeLists(attributes)))
 				.Project.Solution;
+		}
+
+		async Task<Solution> MakeStatic(Document document, AssignmentExpressionSyntax assignment, CancellationToken cancellationToken)
+		{
+			var root = await document.GetSyntaxRootAsync(cancellationToken);
+			if (root is not null)
+			{
+				var model = await document.GetSemanticModelAsync(cancellationToken);
+				if (model is not null)
+				{
+					var symbolInfo = model.GetSymbolInfo(assignment.Right, cancellationToken);
+					if (symbolInfo.Symbol is IMethodSymbol methodSymbol)
+					{
+						var node = root.FindNode(methodSymbol.Locations[0].SourceSpan) as MethodDeclarationSyntax;
+						if (node is not null)
+						{
+							return document.WithSyntaxRoot(
+								root.ReplaceNode(node, node.WithModifiers(TokenList(Token(SyntaxKind.StaticKeyword)))))
+							.Project.Solution;
+						}
+					}
+				}
+			}
+
+			return document.Project.Solution;
 		}
 	}
 }

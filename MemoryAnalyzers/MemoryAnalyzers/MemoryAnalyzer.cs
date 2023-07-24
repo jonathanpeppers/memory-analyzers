@@ -199,6 +199,7 @@ namespace MemoryAnalyzers
 
 			return IsDelegateType(baseType);
 		}
+
 		static bool IsObject(INamedTypeSymbol type) =>
 			type.ContainingNamespace.Name == "System" && type.Name == "Object";
 

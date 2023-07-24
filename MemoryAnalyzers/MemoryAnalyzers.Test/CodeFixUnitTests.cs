@@ -41,6 +41,8 @@ namespace MemoryAnalyzers.Test
 			""";
 
 			var codefix = """
+			using System.Diagnostics.CodeAnalysis;
+
 			class Foo : NSObject
 			{
 			    [UnconditionalSuppressMessage("Memory", "MA0001", Justification = "Proven safe in test: XYZ")]
@@ -49,7 +51,7 @@ namespace MemoryAnalyzers.Test
 			""";
 
 			var expected = VerifyCS.Diagnostic("MA0001").WithLocation(0).WithArguments("EventName");
-			await VerifyCS.VerifyCodeFixAsync(test, expected, codefix, index: 1);
+			await VerifyCS.VerifyCodeFixAsync(test, expected, codefix, index: 1, iterations: 2);
 		}
 
 		[TestMethod]
@@ -84,6 +86,8 @@ namespace MemoryAnalyzers.Test
 			""";
 
 			var codefix = """
+			using System.Diagnostics.CodeAnalysis;
+
 			class Foo : NSObject
 			{
 			    [UnconditionalSuppressMessage("Memory", "MA0002", Justification = "Proven safe in test: XYZ")]
@@ -92,7 +96,7 @@ namespace MemoryAnalyzers.Test
 			""";
 
 			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("FieldName");
-			await VerifyCS.VerifyCodeFixAsync(test, expected, codefix, index: 1);
+			await VerifyCS.VerifyCodeFixAsync(test, expected, codefix, index: 1, iterations: 2);
 		}
 
 		[TestMethod]
@@ -141,6 +145,8 @@ namespace MemoryAnalyzers.Test
 		public async Task MA0003_Remove()
 		{
 			var test = """
+			using System.Diagnostics.CodeAnalysis;
+
 			[Register("UITextField", true)]
 			class UITextField
 			{
@@ -162,6 +168,8 @@ namespace MemoryAnalyzers.Test
 			""";
 
 			var codefix = """
+			using System.Diagnostics.CodeAnalysis;
+
 			[Register("UITextField", true)]
 			class UITextField
 			{
@@ -190,6 +198,8 @@ namespace MemoryAnalyzers.Test
 		public async Task MA0003_MakeStatic()
 		{
 			var test = """
+			using System.Diagnostics.CodeAnalysis;
+
 			[Register("UITextField", true)]
 			class UITextField
 			{
@@ -211,6 +221,8 @@ namespace MemoryAnalyzers.Test
 			""";
 
 			var codefix = """
+			using System.Diagnostics.CodeAnalysis;
+
 			[Register("UITextField", true)]
 			class UITextField
 			{

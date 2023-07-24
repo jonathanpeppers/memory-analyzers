@@ -35,6 +35,9 @@ namespace MemoryAnalyzers.Test
 
 			AddTestCode(test.TestState);
 
+			// Intentionally left out of codefix tests
+			test.TestState.Sources.Add("global using System.Diagnostics.CodeAnalysis;");
+
 			test.ExpectedDiagnostics.AddRange(expected);
 			await test.RunAsync(CancellationToken.None);
 		}
@@ -44,17 +47,21 @@ namespace MemoryAnalyzers.Test
 			=> await VerifyCodeFixAsync(source, DiagnosticResult.EmptyDiagnosticResults, fixedSource, index);
 
 		/// <inheritdoc cref="CodeFixVerifier{TAnalyzer, TCodeFix, TTest, TVerifier}.VerifyCodeFixAsync(string, DiagnosticResult, string)"/>
-		public static async Task VerifyCodeFixAsync(string source, DiagnosticResult expected, string fixedSource, int index)
-			=> await VerifyCodeFixAsync(source, new[] { expected }, fixedSource, index);
+		public static async Task VerifyCodeFixAsync(string source, DiagnosticResult expected, string fixedSource, int index, int iterations = 1)
+			=> await VerifyCodeFixAsync(source, new[] { expected }, fixedSource, index, iterations);
 
 		/// <inheritdoc cref="CodeFixVerifier{TAnalyzer, TCodeFix, TTest, TVerifier}.VerifyCodeFixAsync(string, DiagnosticResult[], string)"/>
-		public static async Task VerifyCodeFixAsync(string source, DiagnosticResult[] expected, string fixedSource, int index)
+		public static async Task VerifyCodeFixAsync(string source, DiagnosticResult[] expected, string fixedSource, int index, int iterations = 1)
 		{
 			var test = new Test
 			{
 				TestCode = source,
 				FixedCode = fixedSource,
 				CodeActionIndex = index,
+				NumberOfIncrementalIterations = iterations,
+				NumberOfFixAllInDocumentIterations = iterations,
+				NumberOfFixAllInProjectIterations = iterations,
+				NumberOfFixAllIterations = iterations,
 			};
 
 			AddTestCode(test.TestState);
@@ -68,7 +75,6 @@ namespace MemoryAnalyzers.Test
 		{
 			// Global usings
 			testState.Sources.Add("global using System;");
-			testState.Sources.Add("global using System.Diagnostics.CodeAnalysis;");
 			testState.Sources.Add("global using Foundation;");
 			testState.Sources.Add("global using UIKit;");
 

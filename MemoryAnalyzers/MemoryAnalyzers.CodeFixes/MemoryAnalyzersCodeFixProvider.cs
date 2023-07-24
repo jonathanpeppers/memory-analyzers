@@ -106,8 +106,13 @@ namespace MemoryAnalyzers
 		async Task<Solution> AddUnconditionalSuppressMessage(Diagnostic diagnostic, Document document, MemberDeclarationSyntax member, CancellationToken cancellationToken)
 		{
 			var root = await document.GetSyntaxRootAsync(cancellationToken);
-			if (root is null || member.Parent is null)
+			if (root is null)
 				return document.Project.Solution;
+
+			if (root is CompilationUnitSyntax unit)
+			{
+				root = unit.AddUsingsIfNotExist("System.Diagnostics.CodeAnalysis");
+			}
 
 			// Used: http://roslynquoter.azurewebsites.net/
 			var attributes = member.AttributeLists.Add(

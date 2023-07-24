@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -90,7 +89,7 @@ namespace MemoryAnalyzers
 				return;
 			if (symbol.Type is INamedTypeSymbol namedType && !IsNSObjectSubclass(namedType))
 			{
-				if (namedType.Name != "Object" && !IsDelegateType(namedType))
+				if (!IsObject(namedType) && !IsDelegateType(namedType))
 					return;
 			}
 
@@ -107,7 +106,7 @@ namespace MemoryAnalyzers
 				return;
 			if (symbol.Type is INamedTypeSymbol namedType && !IsNSObjectSubclass(namedType))
 			{
-				if (namedType.Name != "Object" && !IsDelegateType(namedType))
+				if (!IsObject(namedType) && !IsDelegateType(namedType))
 					return;
 			}
 			if (!IsAutoProperty(symbol))
@@ -139,18 +138,22 @@ namespace MemoryAnalyzers
 		{
 			foreach (var attribute in symbol.GetAttributes())
 			{
-				if (attribute.AttributeClass?.Name == "UnconditionalSuppressMessageAttribute")
-				{
-					var ctorArgs = attribute.ConstructorArguments;
-					if (ctorArgs.Length == 2)
-					{
-						return ctorArgs[1].Value as string == expectedCode;
-					}
+				if (attribute.AttributeClass is null)
+					continue;
+				if (attribute.AttributeClass.ContainingNamespace.Name != "System.Diagnostics.CodeAnalysis")
+					continue;
+				if (attribute.AttributeClass.Name != "UnconditionalSuppressMessageAttribute")
+					continue;
 
-					// This only has a single 2-argument constructor, but let's keep this logic in case it ever changes
-					var namedArgs = attribute.NamedArguments.FirstOrDefault(n => n.Key == "CheckId");
-					return namedArgs.Value.Value as string == expectedCode;
+				var ctorArgs = attribute.ConstructorArguments;
+				if (ctorArgs.Length == 2)
+				{
+					return ctorArgs[1].Value as string == expectedCode;
 				}
+
+				// This only has a single 2-argument constructor, but let's keep this logic in case it ever changes
+				var namedArgs = attribute.NamedArguments.FirstOrDefault(n => n.Key == "CheckId");
+				return namedArgs.Value.Value as string == expectedCode;
 			}
 			return false;
 		}
@@ -160,6 +163,8 @@ namespace MemoryAnalyzers
 			foreach (var attribute in type.GetAttributes())
 			{
 				if (attribute.AttributeClass is null)
+					continue;
+				if (attribute.AttributeClass.ContainingNamespace.Name != "Foundation")
 					continue;
 				if (attribute.AttributeClass.Name != "RegisterAttribute")
 					continue;
@@ -185,7 +190,7 @@ namespace MemoryAnalyzers
 
 		static bool IsDelegateType(INamedTypeSymbol type)
 		{
-			if (type.Name == "Delegate")
+			if (type.ContainingNamespace.Name == "System" && type.Name == "Delegate")
 				return true;
 
 			var baseType = type.BaseType;
@@ -194,6 +199,8 @@ namespace MemoryAnalyzers
 
 			return IsDelegateType(baseType);
 		}
+		static bool IsObject(INamedTypeSymbol type) =>
+			type.ContainingNamespace.Name == "System" && type.Name == "Object";
 
 		//Swiped from: https://www.meziantou.net/checking-if-a-property-is-an-auto-implemented-property-in-roslyn.htm
 		static bool IsAutoProperty(IPropertySymbol propertySymbol)

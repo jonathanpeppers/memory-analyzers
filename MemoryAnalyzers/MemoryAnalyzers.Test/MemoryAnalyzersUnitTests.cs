@@ -149,6 +149,34 @@ namespace MemoryAnalyzers.Test
 		}
 
 		[TestMethod]
+		public async Task FieldThatLeaks_Object()
+		{
+			var test = """
+				class MyViewSubclass : UIView
+				{
+					public object {|#0:FieldName|};
+				}
+			""";
+
+			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("FieldName");
+			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+		}
+
+		[TestMethod]
+		public async Task FieldThatLeaks_Delegate()
+		{
+			var test = """
+				class MyViewSubclass : UIView
+				{
+					public Action {|#0:FieldName|};
+				}
+			""";
+
+			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("FieldName");
+			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+		}
+
+		[TestMethod]
 		public async Task FieldsThatAreOK()
 		{
 			var test = """
@@ -157,6 +185,7 @@ namespace MemoryAnalyzers.Test
 					public WeakReference Foo;
 					public WeakReference<UIView> Bar;
 					public double Baz;
+					public string Text;
 				}
 			""";
 
@@ -183,11 +212,39 @@ namespace MemoryAnalyzers.Test
 			var test = """
 				class MyViewSubclass : UIView
 				{
-					public UIView {|#0:FieldName|} { get; set; }
+					public UIView {|#0:PropertyName|} { get; set; }
 				}
 			""";
 
-			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("FieldName");
+			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("PropertyName");
+			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+		}
+
+		[TestMethod]
+		public async Task PropertyThatLeaks_Object()
+		{
+			var test = """
+				class MyViewSubclass : UIView
+				{
+					public object {|#0:PropertyName|} { get; set; }
+				}
+			""";
+
+			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("PropertyName");
+			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+		}
+
+		[TestMethod]
+		public async Task PropertyThatLeaks_Delegate()
+		{
+			var test = """
+				class MyViewSubclass : UIView
+				{
+					public Action {|#0:PropertyName|} { get; set; }
+				}
+			""";
+
+			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("PropertyName");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
 		}
 
@@ -200,6 +257,7 @@ namespace MemoryAnalyzers.Test
 					public WeakReference Foo { get; set; }
 					public WeakReference<UIView> Bar { get; set; }
 					public double Baz { get; set; }
+					public string Text { get; set; }
 					public UIView EmptyProperty
 					{
 						set => throw new NotImplementedException();
@@ -218,7 +276,7 @@ namespace MemoryAnalyzers.Test
 				class MyViewSubclass : UIView
 				{
 					[UnconditionalSuppressMessage("Memory", "MA0002")]
-					public UIView {|#0:FieldName|} { get; set; }
+					public UIView {|#0:PropertyName|} { get; set; }
 				}
 			""";
 

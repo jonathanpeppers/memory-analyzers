@@ -72,7 +72,7 @@ namespace MemoryAnalyzers
 			var symbol = context.Symbol;
 			if (symbol.DeclaredAccessibility == Accessibility.Private)
 				return;
-			if (!IsFromNSObjectSubclass(symbol.ContainingType))
+			if (!IsNSObjectSubclass(symbol.ContainingType))
 				return;
 			if (HasUnconditionalSuppressMessage(symbol, MA0001))
 				return;
@@ -82,30 +82,34 @@ namespace MemoryAnalyzers
 
 		static void AnalyzeField(SyntaxNodeAnalysisContext context)
 		{
-			if (context.ContainingSymbol is not IFieldSymbol symbol || !IsFromNSObjectSubclass(symbol.ContainingType))
+			if (context.ContainingSymbol is not IFieldSymbol symbol || !IsNSObjectSubclass(symbol.ContainingType))
 				return;
 			if (HasUnconditionalSuppressMessage(symbol, MA0002))
 				return;
 			if (symbol.Type.IsValueType)
 				return;
-			if (symbol.Type.Name == "WeakReference" ||
-				symbol.Type.Name.StartsWith("WeakReference<", StringComparison.Ordinal))
-				return;
+			if (symbol.Type is INamedTypeSymbol namedType && !IsNSObjectSubclass(namedType))
+			{
+				if (namedType.Name != "Object" && !IsDelegateType(namedType))
+					return;
+			}
 
 			context.ReportDiagnostic(Diagnostic.Create(MA0002Rule, symbol.Locations[0], symbol.Name));
 		}
 
 		static void AnalyzeProperty(SyntaxNodeAnalysisContext context)
 		{
-			if (context.ContainingSymbol is not IPropertySymbol symbol || !IsFromNSObjectSubclass(symbol.ContainingType))
+			if (context.ContainingSymbol is not IPropertySymbol symbol || !IsNSObjectSubclass(symbol.ContainingType))
 				return;
 			if (HasUnconditionalSuppressMessage(symbol, MA0002))
 				return;
 			if (symbol.Type.IsValueType)
 				return;
-			if (symbol.Type.Name == "WeakReference" ||
-				symbol.Type.Name.StartsWith("WeakReference<", StringComparison.Ordinal))
-				return;
+			if (symbol.Type is INamedTypeSymbol namedType && !IsNSObjectSubclass(namedType))
+			{
+				if (namedType.Name != "Object" && !IsDelegateType(namedType))
+					return;
+			}
 			if (!IsAutoProperty(symbol))
 				return;
 
@@ -114,7 +118,7 @@ namespace MemoryAnalyzers
 
 		static void AnalyzeSubscription(SyntaxNodeAnalysisContext context)
 		{
-			if (context.ContainingSymbol is not ISymbol symbol || !IsFromNSObjectSubclass(symbol.ContainingType))
+			if (context.ContainingSymbol is not ISymbol symbol || !IsNSObjectSubclass(symbol.ContainingType))
 				return;
 			if (context.Node is not AssignmentExpressionSyntax assignment)
 				return;
@@ -151,7 +155,7 @@ namespace MemoryAnalyzers
 			return false;
 		}
 
-		static bool IsFromNSObjectSubclass(INamedTypeSymbol type)
+		static bool IsNSObjectSubclass(INamedTypeSymbol type)
 		{
 			foreach (var attribute in type.GetAttributes())
 			{
@@ -176,7 +180,19 @@ namespace MemoryAnalyzers
 			if (baseType is null)
 				return false;
 
-			return IsFromNSObjectSubclass(baseType);
+			return IsNSObjectSubclass(baseType);
+		}
+
+		static bool IsDelegateType(INamedTypeSymbol type)
+		{
+			if (type.Name == "Delegate")
+				return true;
+
+			var baseType = type.BaseType;
+			if (baseType is null)
+				return false;
+
+			return IsDelegateType(baseType);
 		}
 
 		//Swiped from: https://www.meziantou.net/checking-if-a-property-is-an-auto-implemented-property-in-roslyn.htm

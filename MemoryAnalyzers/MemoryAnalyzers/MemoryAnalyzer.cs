@@ -174,7 +174,7 @@ namespace MemoryAnalyzers
 
 		/// <summary>
 		/// Returns true if we found these in a known list of OK types
-		/// NOTE: can be O(N) time, iterates base types & interfaces
+		/// NOTE: can be O(N^2) time, iterates base types & interfaces and base types of member type
 		/// </summary>
 		static bool IsGenerallySafe(INamedTypeSymbol containingType, ITypeSymbol memberType)
 		{
@@ -187,15 +187,19 @@ namespace MemoryAnalyzers
 				}
 			}
 
-			var baseType = containingType.BaseType;
-			while (baseType != null)
+			foreach (var containingBaseType in containingType.IterateBaseTypes())
 			{
-				if (GenerallySafeMembers.TryGetValue((baseType.ContainingNamespace.Name, baseType.Name), out var safeMember) &&
-					safeMember.Namespace == memberType.ContainingNamespace.Name && safeMember.Name == memberType.Name)
+				if (GenerallySafeMembers.TryGetValue((containingBaseType.ContainingNamespace.Name, containingBaseType.Name), out var safeMember))
 				{
-					return true;
+					if (safeMember.Namespace == memberType.ContainingNamespace.Name && safeMember.Name == memberType.Name)
+						return true;
+
+					foreach (var baseMemberType in memberType.IterateBaseTypes())
+					{
+						if (safeMember.Namespace == baseMemberType.ContainingNamespace.Name && safeMember.Name == baseMemberType.Name)
+							return true;
+					}
 				}
-				baseType = baseType.BaseType;
 			}
 
 			return false;

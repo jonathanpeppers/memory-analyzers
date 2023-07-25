@@ -194,6 +194,25 @@ namespace MemoryAnalyzers.Test
 		}
 
 		[TestMethod]
+		public async Task UIView_CAShapeLayer()
+		{
+			var test = """
+				namespace UIKit
+				{
+					[Register("CAShapeLayer", true)]
+					class CAShapeLayer : CALayer { }
+				}
+
+				class MyViewSubclass : UIView
+				{
+					public CAShapeLayer MyLayer;
+				}
+			""";
+
+			await VerifyCS.VerifyAnalyzerAsync(test);
+		}
+
+		[TestMethod]
 		public async Task UnconditionalSuppressMessage_MA0002_Field()
 		{
 			var test = """

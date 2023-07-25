@@ -272,6 +272,46 @@ namespace MemoryAnalyzers.Test
 		}
 
 		[TestMethod]
+		public async Task UIApplicationDelegate_Window()
+		{
+			var test = """
+				namespace UIKit
+				{
+					class UIApplicationDelegate : NSObject { }
+
+					class UIWindow : NSObject { }
+				}
+
+				class MyAppDelegate : UIApplicationDelegate
+				{
+					public virtual UIWindow Window { get; set; }
+				}
+			""";
+
+			await VerifyCS.VerifyAnalyzerAsync(test);
+		}
+
+		[TestMethod]
+		public async Task IUIApplicationDelegate_Window()
+		{
+			var test = """
+				namespace UIKit
+				{
+					interface IUIApplicationDelegate { }
+
+					class UIWindow : NSObject { }
+				}
+
+				class MyAppDelegate : NSObject, IUIApplicationDelegate
+				{
+					public virtual UIWindow Window { get; set; }
+				}
+			""";
+
+			await VerifyCS.VerifyAnalyzerAsync(test);
+		}
+
+		[TestMethod]
 		public async Task UnconditionalSuppressMessage_MA0002_Property()
 		{
 			var test = """

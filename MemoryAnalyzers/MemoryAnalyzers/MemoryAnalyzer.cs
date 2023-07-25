@@ -19,7 +19,7 @@ namespace MemoryAnalyzers
 		static readonly Dictionary<(string Namespace, string Name), (string Namespace, string Name)> GenerallySafeMembers = new ()
 		{
 			// Generally a CALayer in a UIView is fine
-			{ ("CoreAnimation", "CALayer"), ("UIKit", "UIView") },
+			{ ("UIKit", "UIView"), ("CoreAnimation", "CALayer") },
 			// Generally a UIWindow in a UIApplicationDelegate/IUIApplicationDelegate is fine
 			{ ("UIKit", "UIApplicationDelegate"), ("UIKit", "UIWindow") },
 			{ ("UIKit", "IUIApplicationDelegate"), ("UIKit", "UIWindow") },
@@ -101,7 +101,7 @@ namespace MemoryAnalyzers
 			{
 				if (!IsObject(namedType) && !IsDelegateType(namedType) && !IsNSObjectSubclass(namedType))
 					return;
-				if (IsGenerallySafe(symbol.ContainingType.BaseType, symbol.Type))
+				if (IsGenerallySafe(symbol.ContainingType, symbol.Type))
 					return;
 			}
 
@@ -120,7 +120,7 @@ namespace MemoryAnalyzers
 			{
 				if (!IsObject(namedType) && !IsDelegateType(namedType) && !IsNSObjectSubclass(namedType))
 					return;
-				if (IsGenerallySafe(symbol.ContainingType.BaseType, symbol.Type))
+				if (IsGenerallySafe(symbol.ContainingType, symbol.Type))
 					return;
 			}
 			if (!IsAutoProperty(symbol))
@@ -174,11 +174,32 @@ namespace MemoryAnalyzers
 
 		/// <summary>
 		/// Returns true if we found these in a known list of OK types
+		/// NOTE: can be O(N) time, iterates base types & interfaces
 		/// </summary>
-		static bool IsGenerallySafe(INamedTypeSymbol? namedType, ITypeSymbol symbol) =>
-			namedType is not null &&
-			GenerallySafeMembers.TryGetValue((symbol.ContainingNamespace.Name, symbol.Name), out var safeMember) &&
-			safeMember.Namespace == namedType.ContainingNamespace.Name && safeMember.Name == namedType.Name;
+		static bool IsGenerallySafe(INamedTypeSymbol containingType, ITypeSymbol memberType)
+		{
+			foreach (var iface in containingType.AllInterfaces)
+			{
+				if (GenerallySafeMembers.TryGetValue((iface.ContainingNamespace.Name, iface.Name), out var safeMember) &&
+					safeMember.Namespace == memberType.ContainingNamespace.Name && safeMember.Name == memberType.Name)
+				{
+					return true;
+				}
+			}
+
+			var baseType = containingType.BaseType;
+			while (baseType != null)
+			{
+				if (GenerallySafeMembers.TryGetValue((baseType.ContainingNamespace.Name, baseType.Name), out var safeMember) &&
+					safeMember.Namespace == memberType.ContainingNamespace.Name && safeMember.Name == memberType.Name)
+				{
+					return true;
+				}
+				baseType = baseType.BaseType;
+			}
+
+			return false;
+		}
 
 		/// <summary>
 		/// Returns true if a type is a special NSObject type

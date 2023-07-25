@@ -140,6 +140,14 @@ namespace MemoryAnalyzers.Test
 				class UIColor : NSObject { }
 			""");
 
+			// UIKit.UIImage
+			testState.Sources.Add("""
+				namespace UIKit;
+
+				[Register("UIImage", true)]
+				class UIImage : NSObject { }
+			""");
+
 			// CoreAnimation.CALayer
 			testState.Sources.Add("""
 				namespace CoreAnimation;

@@ -23,6 +23,8 @@ namespace MemoryAnalyzers
 		{
 			// UIColor is fine
 			{ ("UIKit", "UIColor") },
+			// UIImage is fine
+			{ ("UIKit", "UIImage") },
 		};
 
 		/// <summary>

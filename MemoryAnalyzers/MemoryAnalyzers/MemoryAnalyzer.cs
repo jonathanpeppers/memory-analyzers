@@ -109,13 +109,18 @@ namespace MemoryAnalyzers
 				return;
 			if (symbol.Type.IsValueType)
 				return;
-			if (symbol.Type is INamedTypeSymbol namedType)
+			if (symbol.Type is INamedTypeSymbol namedSymbol)
 			{
-				if (GenerallySafe.Contains((namedType.ContainingNamespace.Name, namedType.Name)))
+				if (GenerallySafe.Contains((namedSymbol.ContainingNamespace.Name, namedSymbol.Name)))
 					return;
-				if (!IsObject(namedType) && !IsDelegateType(namedType) && !IsNSObjectSubclass(namedType))
+				if (!IsObject(namedSymbol) && !IsDelegateType(namedSymbol) && !IsNSObjectSubclass(namedSymbol))
 					return;
 				if (IsGenerallySafe(symbol.ContainingType, symbol.Type))
+					return;
+			}
+			else if (symbol.Type is IArrayTypeSymbol arraySymbol)
+			{
+				if (arraySymbol.ElementType.IsValueType)
 					return;
 			}
 
@@ -130,13 +135,18 @@ namespace MemoryAnalyzers
 				return;
 			if (symbol.Type.IsValueType)
 				return;
-			if (symbol.Type is INamedTypeSymbol namedType)
+			if (symbol.Type is INamedTypeSymbol namedSymbol)
 			{
-				if (GenerallySafe.Contains((namedType.ContainingNamespace.Name, namedType.Name)))
+				if (GenerallySafe.Contains((namedSymbol.ContainingNamespace.Name, namedSymbol.Name)))
 					return;
-				if (!IsObject(namedType) && !IsDelegateType(namedType) && !IsNSObjectSubclass(namedType))
+				if (!IsObject(namedSymbol) && !IsDelegateType(namedSymbol) && !IsNSObjectSubclass(namedSymbol))
 					return;
 				if (IsGenerallySafe(symbol.ContainingType, symbol.Type))
+					return;
+			}
+			else if (symbol.Type is IArrayTypeSymbol arraySymbol)
+			{
+				if (arraySymbol.ElementType.IsValueType)
 					return;
 			}
 			if (!IsAutoProperty(symbol))

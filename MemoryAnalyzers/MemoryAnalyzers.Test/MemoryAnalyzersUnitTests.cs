@@ -188,6 +188,7 @@ namespace MemoryAnalyzers.Test
 					public string Text;
 					public CALayer MyLayer;
 					public UIColor MyColor;
+					public double[] MyArray;
 				}
 			""";
 
@@ -286,6 +287,7 @@ namespace MemoryAnalyzers.Test
 					}
 					public CALayer MyLayer { get; set; }
 					public UIColor MyColor { get; set; }
+					public double[] MyArray { get; set; }
 				}
 			""";
 

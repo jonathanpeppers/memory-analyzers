@@ -132,6 +132,14 @@ namespace MemoryAnalyzers.Test
 				class UIView : NSObject { }
 			""");
 
+			// UIKit.UIColor
+			testState.Sources.Add("""
+				namespace UIKit;
+
+				[Register("UIColor", true)]
+				class UIColor : NSObject { }
+			""");
+
 			// CoreAnimation.CALayer
 			testState.Sources.Add("""
 				namespace CoreAnimation;

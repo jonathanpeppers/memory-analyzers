@@ -187,6 +187,7 @@ namespace MemoryAnalyzers.Test
 					public double Baz;
 					public string Text;
 					public CALayer MyLayer;
+					public UIColor MyColor;
 				}
 			""";
 
@@ -284,6 +285,7 @@ namespace MemoryAnalyzers.Test
 						get => throw new NotImplementedException();
 					}
 					public CALayer MyLayer { get; set; }
+					public UIColor MyColor { get; set; }
 				}
 			""";
 

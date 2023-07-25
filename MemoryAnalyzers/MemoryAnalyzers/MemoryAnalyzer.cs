@@ -16,11 +16,23 @@ namespace MemoryAnalyzers
 		public const string MA0003 = "MA0003";
 		const string Category = "Memory";
 
-		static readonly Dictionary<(string Namespace, string Name), (string Namespace, string Name)> GenerallySafeMembers = new ()
+		/// <summary>
+		/// List of types that are "generally OK"
+		/// </summary>
+		static readonly HashSet<(string Namespace, string Name)> GenerallySafe = new()
 		{
-			// Generally a CALayer in a UIView is fine
+			// UIColor is fine
+			{ ("UIKit", "UIColor") },
+		};
+
+		/// <summary>
+		/// List of types when inside other types, that are "generally OK"
+		/// </summary>
+		static readonly Dictionary<(string Namespace, string Name), (string Namespace, string Name)> SafeWhenInsideOf = new ()
+		{
+			// CALayer in a UIView is fine
 			{ ("UIKit", "UIView"), ("CoreAnimation", "CALayer") },
-			// Generally a UIWindow in a UIApplicationDelegate/IUIApplicationDelegate is fine
+			// UIWindow in a UIApplicationDelegate/IUIApplicationDelegate is fine
 			{ ("UIKit", "UIApplicationDelegate"), ("UIKit", "UIWindow") },
 			{ ("UIKit", "IUIApplicationDelegate"), ("UIKit", "UIWindow") },
 		};
@@ -99,6 +111,8 @@ namespace MemoryAnalyzers
 				return;
 			if (symbol.Type is INamedTypeSymbol namedType)
 			{
+				if (GenerallySafe.Contains((namedType.ContainingNamespace.Name, namedType.Name)))
+					return;
 				if (!IsObject(namedType) && !IsDelegateType(namedType) && !IsNSObjectSubclass(namedType))
 					return;
 				if (IsGenerallySafe(symbol.ContainingType, symbol.Type))
@@ -118,6 +132,8 @@ namespace MemoryAnalyzers
 				return;
 			if (symbol.Type is INamedTypeSymbol namedType)
 			{
+				if (GenerallySafe.Contains((namedType.ContainingNamespace.Name, namedType.Name)))
+					return;
 				if (!IsObject(namedType) && !IsDelegateType(namedType) && !IsNSObjectSubclass(namedType))
 					return;
 				if (IsGenerallySafe(symbol.ContainingType, symbol.Type))
@@ -180,7 +196,7 @@ namespace MemoryAnalyzers
 		{
 			foreach (var iface in containingType.AllInterfaces)
 			{
-				if (GenerallySafeMembers.TryGetValue((iface.ContainingNamespace.Name, iface.Name), out var safeMember) &&
+				if (SafeWhenInsideOf.TryGetValue((iface.ContainingNamespace.Name, iface.Name), out var safeMember) &&
 					safeMember.Namespace == memberType.ContainingNamespace.Name && safeMember.Name == memberType.Name)
 				{
 					return true;
@@ -189,7 +205,7 @@ namespace MemoryAnalyzers
 
 			foreach (var containingBaseType in containingType.IterateBaseTypes())
 			{
-				if (GenerallySafeMembers.TryGetValue((containingBaseType.ContainingNamespace.Name, containingBaseType.Name), out var safeMember))
+				if (SafeWhenInsideOf.TryGetValue((containingBaseType.ContainingNamespace.Name, containingBaseType.Name), out var safeMember))
 				{
 					if (safeMember.Namespace == memberType.ContainingNamespace.Name && safeMember.Name == memberType.Name)
 						return true;

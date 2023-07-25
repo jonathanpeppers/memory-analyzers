@@ -180,6 +180,10 @@ namespace MemoryAnalyzers
 			GenerallySafeMembers.TryGetValue((symbol.ContainingNamespace.Name, symbol.Name), out var safeMember) &&
 			safeMember.Namespace == namedType.ContainingNamespace.Name && safeMember.Name == namedType.Name;
 
+		/// <summary>
+		/// Returns true if a type is a special NSObject type
+		/// NOTE: can be O(N) time, recurses base types
+		/// </summary>
 		static bool IsNSObjectSubclass(INamedTypeSymbol type)
 		{
 			foreach (var attribute in type.GetAttributes())
@@ -210,6 +214,10 @@ namespace MemoryAnalyzers
 			return IsNSObjectSubclass(baseType);
 		}
 
+		/// <summary>
+		/// Returns true if a type is a System.Delegate
+		/// NOTE: can be O(N) time, recurses base types
+		/// </summary>
 		static bool IsDelegateType(INamedTypeSymbol type)
 		{
 			if (type.ContainingNamespace.Name == "System" && type.Name == "Delegate")
@@ -222,6 +230,9 @@ namespace MemoryAnalyzers
 			return IsDelegateType(baseType);
 		}
 
+		/// <summary>
+		/// Returns true if a type is exactly System.Object
+		/// </summary>
 		static bool IsObject(INamedTypeSymbol type) =>
 			type.ContainingNamespace.Name == "System" && type.Name == "Object";
 

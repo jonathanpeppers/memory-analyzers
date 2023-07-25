@@ -75,6 +75,7 @@ namespace MemoryAnalyzers.Test
 		{
 			// Global usings
 			testState.Sources.Add("global using System;");
+			testState.Sources.Add("global using CoreAnimation;");
 			testState.Sources.Add("global using Foundation;");
 			testState.Sources.Add("global using UIKit;");
 
@@ -129,6 +130,14 @@ namespace MemoryAnalyzers.Test
 
 				[Register("UIView", isWrapper: true)]
 				class UIView : NSObject { }
+			""");
+
+			// CoreAnimation.CALayer
+			testState.Sources.Add("""
+				namespace CoreAnimation;
+
+				[Register("CALayer", true)]
+				class CALayer : NSObject { }
 			""");
 		}
 	}

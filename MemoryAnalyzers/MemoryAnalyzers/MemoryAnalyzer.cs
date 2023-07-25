@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -14,6 +15,15 @@ namespace MemoryAnalyzers
 		public const string MA0002 = "MA0002";
 		public const string MA0003 = "MA0003";
 		const string Category = "Memory";
+
+		static readonly Dictionary<(string Namespace, string Name), (string Namespace, string Name)> GenerallySafeMembers = new ()
+		{
+			// Generally a CALayer in a UIView is fine
+			{ ("CoreAnimation", "CALayer"), ("UIKit", "UIView") },
+			// Generally a UIWindow in a UIApplicationDelegate/IUIApplicationDelegate is fine
+			{ ("UIKit", "UIApplicationDelegate"), ("UIKit", "UIWindow") },
+			{ ("UIKit", "IUIApplicationDelegate"), ("UIKit", "UIWindow") },
+		};
 
 		static readonly DiagnosticDescriptor MA0001Rule = new(
 			MA0001,
@@ -87,9 +97,11 @@ namespace MemoryAnalyzers
 				return;
 			if (symbol.Type.IsValueType)
 				return;
-			if (symbol.Type is INamedTypeSymbol namedType && !IsNSObjectSubclass(namedType))
+			if (symbol.Type is INamedTypeSymbol namedType)
 			{
-				if (!IsObject(namedType) && !IsDelegateType(namedType))
+				if (!IsObject(namedType) && !IsDelegateType(namedType) && !IsNSObjectSubclass(namedType))
+					return;
+				if (IsGenerallySafe(symbol.ContainingType.BaseType, symbol.Type))
 					return;
 			}
 
@@ -104,9 +116,11 @@ namespace MemoryAnalyzers
 				return;
 			if (symbol.Type.IsValueType)
 				return;
-			if (symbol.Type is INamedTypeSymbol namedType && !IsNSObjectSubclass(namedType))
+			if (symbol.Type is INamedTypeSymbol namedType)
 			{
-				if (!IsObject(namedType) && !IsDelegateType(namedType))
+				if (!IsObject(namedType) && !IsDelegateType(namedType) && !IsNSObjectSubclass(namedType))
+					return;
+				if (IsGenerallySafe(symbol.ContainingType.BaseType, symbol.Type))
 					return;
 			}
 			if (!IsAutoProperty(symbol))
@@ -157,6 +171,14 @@ namespace MemoryAnalyzers
 			}
 			return false;
 		}
+
+		/// <summary>
+		/// Returns true if we found these in a known list of OK types
+		/// </summary>
+		static bool IsGenerallySafe(INamedTypeSymbol? namedType, ITypeSymbol symbol) =>
+			namedType is not null &&
+			GenerallySafeMembers.TryGetValue((symbol.ContainingNamespace.Name, symbol.Name), out var safeMember) &&
+			safeMember.Namespace == namedType.ContainingNamespace.Name && safeMember.Name == namedType.Name;
 
 		static bool IsNSObjectSubclass(INamedTypeSymbol type)
 		{

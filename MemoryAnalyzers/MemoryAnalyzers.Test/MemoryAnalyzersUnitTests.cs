@@ -186,6 +186,7 @@ namespace MemoryAnalyzers.Test
 					public WeakReference<UIView> Bar;
 					public double Baz;
 					public string Text;
+					public CALayer MyLayer;
 				}
 			""";
 
@@ -263,6 +264,7 @@ namespace MemoryAnalyzers.Test
 						set => throw new NotImplementedException();
 						get => throw new NotImplementedException();
 					}
+					public CALayer MyLayer { get; set; }
 				}
 			""";
 

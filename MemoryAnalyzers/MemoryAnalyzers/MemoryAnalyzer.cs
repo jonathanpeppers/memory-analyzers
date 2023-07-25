@@ -35,6 +35,7 @@ namespace MemoryAnalyzers
 			// UIWindow in a UIApplicationDelegate/IUIApplicationDelegate is fine
 			{ ("UIKit", "UIApplicationDelegate"), ("UIKit", "UIWindow") },
 			{ ("UIKit", "IUIApplicationDelegate"), ("UIKit", "UIWindow") },
+			{ ("UIKit", "IUIWindowSceneDelegate"), ("UIKit", "UIWindow") },
 		};
 
 		static readonly DiagnosticDescriptor MA0001Rule = new(

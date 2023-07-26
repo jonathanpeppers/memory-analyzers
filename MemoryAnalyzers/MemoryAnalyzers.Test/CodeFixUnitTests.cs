@@ -41,8 +41,6 @@ namespace MemoryAnalyzers.Test
 			""";
 
 			var codefix = """
-			using System.Diagnostics.CodeAnalysis;
-
 			class Foo : NSObject
 			{
 			    [UnconditionalSuppressMessage("Memory", "MA0001", Justification = "Proven safe in test: XYZ")]
@@ -51,7 +49,7 @@ namespace MemoryAnalyzers.Test
 			""";
 
 			var expected = VerifyCS.Diagnostic("MA0001").WithLocation(0).WithArguments("EventName");
-			await VerifyCS.VerifyCodeFixAsync(test, expected, codefix, index: 1, iterations: 2);
+			await VerifyCS.VerifyCodeFixAsync(test, expected, codefix, index: 1);
 		}
 
 		[TestMethod]
@@ -86,8 +84,6 @@ namespace MemoryAnalyzers.Test
 			""";
 
 			var codefix = """
-			using System.Diagnostics.CodeAnalysis;
-
 			class Foo : NSObject
 			{
 			    [UnconditionalSuppressMessage("Memory", "MA0002", Justification = "Proven safe in test: XYZ")]
@@ -96,7 +92,7 @@ namespace MemoryAnalyzers.Test
 			""";
 
 			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("FieldName");
-			await VerifyCS.VerifyCodeFixAsync(test, expected, codefix, index: 1, iterations: 2);
+			await VerifyCS.VerifyCodeFixAsync(test, expected, codefix, index: 1);
 		}
 
 		[TestMethod]

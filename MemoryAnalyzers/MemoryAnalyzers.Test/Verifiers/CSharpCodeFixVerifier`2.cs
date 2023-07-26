@@ -35,9 +35,6 @@ namespace MemoryAnalyzers.Test
 
 			AddTestCode(test.TestState);
 
-			// Intentionally left out of codefix tests
-			test.TestState.Sources.Add("global using System.Diagnostics.CodeAnalysis;");
-
 			test.ExpectedDiagnostics.AddRange(expected);
 			await test.RunAsync(CancellationToken.None);
 		}
@@ -75,6 +72,7 @@ namespace MemoryAnalyzers.Test
 		{
 			// Global usings
 			testState.Sources.Add("global using System;");
+			testState.Sources.Add("global using System.Diagnostics.CodeAnalysis;");
 			testState.Sources.Add("global using CoreAnimation;");
 			testState.Sources.Add("global using Foundation;");
 			testState.Sources.Add("global using UIKit;");

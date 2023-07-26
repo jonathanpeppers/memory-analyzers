@@ -109,10 +109,11 @@ namespace MemoryAnalyzers
 			if (root is null)
 				return document.Project.Solution;
 
-			if (root is CompilationUnitSyntax unit)
-			{
-				root = unit.AddUsingsIfNotExist("System.Diagnostics.CodeAnalysis");
-			}
+			// FIXME: I believe this causes IDEs to act strangely, removing to test that theory
+			//if (root is CompilationUnitSyntax unit)
+			//{
+			//	root = unit.AddUsingsIfNotExist("System.Diagnostics.CodeAnalysis");
+			//}
 
 			// Used: http://roslynquoter.azurewebsites.net/
 			var attributes = member.AttributeLists.Add(

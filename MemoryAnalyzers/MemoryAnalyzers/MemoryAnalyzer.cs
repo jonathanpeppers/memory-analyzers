@@ -104,15 +104,12 @@ namespace MemoryAnalyzers
 			if (symbol.AddMethod is null)
 				return;
 
-			// If we find an empty add { }
+			// Return if we find an `add { }` implementation at all
 			foreach (var syntaxReference in symbol.AddMethod.DeclaringSyntaxReferences)
 			{
 				var node = syntaxReference.GetSyntax();
-				if (node is AccessorDeclarationSyntax method)
-				{
-					if (method.Body is null || method.Body.Statements.Count == 0)
-						return;
-				}
+				if (node is AccessorDeclarationSyntax)
+					return;
 			}
 
 			context.ReportDiagnostic(Diagnostic.Create(MA0001Rule, symbol.Locations[0], symbol.Name));

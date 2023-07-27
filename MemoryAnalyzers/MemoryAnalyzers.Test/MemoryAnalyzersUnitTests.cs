@@ -88,7 +88,25 @@ namespace MemoryAnalyzers.Test
 		}
 
 		[TestMethod]
-		public async Task EventThatIsOk()
+		public async Task EventThatIsOk_Empty()
+		{
+			var test = """
+				class Foo : NSObject
+				{
+					public event EventHandler {|#0:EventName|}
+					{
+						add { }
+						remove { }
+					}
+				}
+			""";
+
+			// 0 warnings
+			await VerifyCS.VerifyAnalyzerAsync(test);
+		}
+
+		[TestMethod]
+		public async Task EventThatIsOk_Private()
 		{
 			var test = """
 				class Foo : NSObject

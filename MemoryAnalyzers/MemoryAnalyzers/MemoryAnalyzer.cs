@@ -93,13 +93,27 @@ namespace MemoryAnalyzers
 
 		static void AnalyzeEvent(SymbolAnalysisContext context)
 		{
-			var symbol = context.Symbol;
+			if (context.Symbol is not IEventSymbol symbol)
+				return;
 			if (symbol.DeclaredAccessibility == Accessibility.Private)
 				return;
 			if (!IsNSObjectSubclass(symbol.ContainingType))
 				return;
 			if (HasUnconditionalSuppressMessage(symbol, MA0001))
 				return;
+			if (symbol.AddMethod is null)
+				return;
+
+			// If we find an empty add { }
+			foreach (var syntaxReference in symbol.AddMethod.DeclaringSyntaxReferences)
+			{
+				var node = syntaxReference.GetSyntax();
+				if (node is AccessorDeclarationSyntax method)
+				{
+					if (method.Body is null || method.Body.Statements.Count == 0)
+						return;
+				}
+			}
 
 			context.ReportDiagnostic(Diagnostic.Create(MA0001Rule, symbol.Locations[0], symbol.Name));
 		}

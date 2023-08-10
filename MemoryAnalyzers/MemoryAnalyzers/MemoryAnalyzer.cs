@@ -178,6 +178,8 @@ namespace MemoryAnalyzers
 			var rightInfo = context.SemanticModel.GetSymbolInfo(assignment.Right);
 			if (rightInfo.Symbol is not IMethodSymbol methodSymbol || methodSymbol.IsStatic)
 				return; // static methods are fine
+			if (HasUnconditionalSuppressMessage(methodSymbol, MA0003))
+				return; // Method has [UnconditionalSuppressMessage]
 			if (!IsNSObjectSubclass(methodSymbol.ContainingType))
 				return; // If the method is on a non-NSObject subclass, it's fine
 
@@ -203,7 +205,7 @@ namespace MemoryAnalyzers
 			{
 				if (attribute.AttributeClass is null)
 					continue;
-				if (attribute.AttributeClass.ContainingNamespace.Name != "System.Diagnostics.CodeAnalysis")
+				if (attribute.AttributeClass.ContainingNamespace.ToString() != "System.Diagnostics.CodeAnalysis")
 					continue;
 				if (attribute.AttributeClass.Name != "UnconditionalSuppressMessageAttribute")
 					continue;

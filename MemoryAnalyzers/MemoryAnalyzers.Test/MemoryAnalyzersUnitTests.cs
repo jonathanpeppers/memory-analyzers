@@ -506,5 +506,71 @@ namespace MemoryAnalyzers.Test
 			var expected = VerifyCS.Diagnostic("MA0003").WithLocation(0).WithArguments("OnValueChanged");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
 		}
+
+		/// <summary>
+		/// This pattern is used commonly in .NET MAUI, and should be OK
+		/// </summary>
+		[TestMethod]
+		public async Task SubscriptionForProxyClass_OK()
+		{
+			var test = """
+				[Register(Name = "UITextField", IsWrapper = true)]
+				class UITextField
+				{
+					[UnconditionalSuppressMessage("Memory", "MA0001")]
+					public event EventHandler EditingDidBegin;
+				}
+
+				class MyView : UIView
+				{
+					readonly UITextFieldProxy _proxy = new();
+
+					public MyView()
+					{
+						new UITextField().EditingDidBegin += _proxy.OnEditingDidBegin;
+					}
+
+					class UITextFieldProxy
+					{
+						public void OnEditingDidBegin(object sender, EventArgs e) { }
+					}
+				}
+			""";
+
+			await VerifyCS.VerifyAnalyzerAsync(test);
+		}
+
+		[TestMethod]
+		public async Task SubscriptionForProxyClass_NotOK()
+		{
+			var test = """
+				[Register(Name = "UITextField", IsWrapper = true)]
+				class UITextField
+				{
+					[UnconditionalSuppressMessage("Memory", "MA0001")]
+					public event EventHandler EditingDidBegin;
+				}
+
+				class MyView : UIView
+				{
+					[UnconditionalSuppressMessage("Memory", "MA0002")]
+					readonly UITextFieldProxy _proxy = new();
+
+					public MyView()
+					{
+						new UITextField().EditingDidBegin += _proxy.{|#0:OnEditingDidBegin|};;
+					}
+
+					// This should warn, because it is NSObject
+					class UITextFieldProxy : NSObject
+					{
+						public void OnEditingDidBegin(object sender, EventArgs e) { }
+					}
+				}
+			""";
+
+			var expected = VerifyCS.Diagnostic("MA0003").WithLocation(0).WithArguments("OnEditingDidBegin");
+			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+		}
 	}
 }

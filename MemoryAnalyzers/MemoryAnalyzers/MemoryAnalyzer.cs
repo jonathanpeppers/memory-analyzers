@@ -178,14 +178,23 @@ namespace MemoryAnalyzers
 			var rightInfo = context.SemanticModel.GetSymbolInfo(assignment.Right);
 			if (rightInfo.Symbol is not IMethodSymbol methodSymbol || methodSymbol.IsStatic)
 				return; // static methods are fine
+			if (!IsNSObjectSubclass(methodSymbol.ContainingType))
+				return; // If the method is on a non-NSObject subclass, it's fine
 
 			// Subscribing to events you declare are fine
 			if (assignment.Left is IdentifierNameSyntax)
 				return;
-			if (assignment.Left is MemberAccessExpressionSyntax m && m.Expression is ThisExpressionSyntax)
+			if (assignment.Left is MemberAccessExpressionSyntax left && left.Expression is ThisExpressionSyntax)
 				return;
 
-			context.ReportDiagnostic(Diagnostic.Create(MA0003Rule, assignment.Right.GetLocation(), methodSymbol.Name));
+			// We have to calculate the proper location for something like `+= _proxy.OnValueChanged`
+			Location? location;
+			if (assignment.Right is MemberAccessExpressionSyntax right)
+				location = right.Name.GetLocation();
+			else
+				location = assignment.Right.GetLocation();
+
+			context.ReportDiagnostic(Diagnostic.Create(MA0003Rule, location, methodSymbol.Name));
 		}
 
 		static bool HasUnconditionalSuppressMessage(ISymbol symbol, string expectedCode)

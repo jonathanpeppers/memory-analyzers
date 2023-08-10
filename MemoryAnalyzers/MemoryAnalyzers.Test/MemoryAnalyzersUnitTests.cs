@@ -558,7 +558,7 @@ namespace MemoryAnalyzers.Test
 
 					public MyView()
 					{
-						new UITextField().EditingDidBegin += _proxy.{|#0:OnEditingDidBegin|};;
+						new UITextField().EditingDidBegin += _proxy.{|#0:OnEditingDidBegin|};
 					}
 
 					// This should warn, because it is NSObject
@@ -571,6 +571,40 @@ namespace MemoryAnalyzers.Test
 
 			var expected = VerifyCS.Diagnostic("MA0003").WithLocation(0).WithArguments("OnEditingDidBegin");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+		}
+
+		[TestMethod]
+		public async Task SubscriptionForProxyClass_Suppressed()
+		{
+			var test = """
+				[Register(Name = "UITextField", IsWrapper = true)]
+				class UITextField
+				{
+					[UnconditionalSuppressMessage("Memory", "MA0001")]
+					public event EventHandler EditingDidBegin;
+				}
+
+				class MyView : UIView
+				{
+					[UnconditionalSuppressMessage("Memory", "MA0002")]
+					readonly UITextFieldProxy _proxy = new();
+
+					public MyView()
+					{
+						new UITextField().EditingDidBegin += _proxy.OnEditingDidBegin;
+					}
+
+					// This should warn, because it is NSObject
+					class UITextFieldProxy : NSObject
+					{
+						// But then we suppressed the warning
+						[UnconditionalSuppressMessage("Memory", "MA0003")]
+						public void OnEditingDidBegin(object sender, EventArgs e) { }
+					}
+				}
+			""";
+
+			await VerifyCS.VerifyAnalyzerAsync(test);
 		}
 	}
 }

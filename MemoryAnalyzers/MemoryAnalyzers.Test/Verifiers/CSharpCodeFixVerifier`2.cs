@@ -98,7 +98,7 @@ namespace MemoryAnalyzers.Test
 				}
 			""");
 
-			// Foundation.NSObject
+			// Foundation
 			testState.Sources.Add("""
 				namespace Foundation;
 
@@ -120,33 +120,32 @@ namespace MemoryAnalyzers.Test
 
 				[Register("NSObject", isWrapper: true)]
 				class NSObject { }
+
+				[Register("NSString", isWrapper: true)]
+				class NSString : NSObject
+				{
+					public NSString(string text) { }
+				}
 			""");
 
-			// UIKit.UIView
+			// UIKit
 			testState.Sources.Add("""
 				namespace UIKit;
 
 				[Register("UIView", isWrapper: true)]
 				class UIView : NSObject { }
-			""");
-
-			// UIKit.UIColor
-			testState.Sources.Add("""
-				namespace UIKit;
 
 				[Register("UIColor", true)]
 				class UIColor : NSObject { }
-			""");
-
-			// UIKit.UIImage
-			testState.Sources.Add("""
-				namespace UIKit;
 
 				[Register("UIImage", true)]
 				class UIImage : NSObject { }
+
+				[Register("UITableViewCell", true)]
+				class UITableViewCell : UIView { }
 			""");
 
-			// CoreAnimation.CALayer
+			// CoreAnimation
 			testState.Sources.Add("""
 				namespace CoreAnimation;
 

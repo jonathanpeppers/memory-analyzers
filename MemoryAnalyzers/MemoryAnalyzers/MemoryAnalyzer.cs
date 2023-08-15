@@ -25,6 +25,8 @@ namespace MemoryAnalyzers
 			{ ("UIKit", "UIColor") },
 			// UIImage is fine
 			{ ("UIKit", "UIImage") },
+			// NSString is fine
+			{ ("Foundation", "NSString") },
 		};
 
 		/// <summary>

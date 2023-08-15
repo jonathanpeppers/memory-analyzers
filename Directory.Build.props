@@ -3,7 +3,7 @@
     <!-- Projects have to opt in to be packed -->
     <IsPackable>false</IsPackable>
     <Version>0.1.0</Version>
-    <PackageVersion>$(Version)-beta.3</PackageVersion>
+    <PackageVersion>$(Version)-beta.4</PackageVersion>
     <Authors>Jonathan Peppers</Authors>
     <PackageTags>C# Roslyn memory analyzers</PackageTags>
     <PackageProjectUrl>https://github.com/jonathanpeppers/memory-analyzers</PackageProjectUrl>

@@ -215,6 +215,19 @@ namespace MemoryAnalyzers.Test
 		}
 
 		[TestMethod]
+		public async Task NSStringFieldIsOK()
+		{
+			var test = """
+				class MyCustomCell : UITableViewCell
+				{
+					static readonly NSString MyCellId = new NSString("MyCustomCell");
+				}
+			""";
+
+			await VerifyCS.VerifyAnalyzerAsync(test);
+		}
+
+		[TestMethod]
 		public async Task UIView_CAShapeLayer()
 		{
 			var test = """

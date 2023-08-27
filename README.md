@@ -1,5 +1,7 @@
 # memory-analyzers
 
+ [![NuGet](https://buildstats.info/nuget/MemoryAnalyzers?includePreReleases=true)](https://www.nuget.org/packages/MemoryAnalyzers/)
+
 A set of Roslyn C# code analyzers for finding memory leaks in iOS and
 MacCatalyst applications.
 

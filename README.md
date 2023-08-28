@@ -3,7 +3,16 @@
  [![NuGet](https://buildstats.info/nuget/MemoryAnalyzers?includePreReleases=true)](https://www.nuget.org/packages/MemoryAnalyzers/)
 
 A set of Roslyn C# code analyzers for finding memory leaks in iOS and
-MacCatalyst applications.
+MacCatalyst applications -- with potentially other ideas in the future.
+
+For more information on the "circular reference" problem on Apple platforms,
+see:
+
+* https://github.com/dotnet/maui/wiki/Memory-Leaks#circular-references-on-ios-and-catalyst
+
+Note that this "circular reference" situation would occur in Swift or
+Objective-C, so it is not a .NET-specific problem. It does not occur on Android
+or Windows platforms.
 
 ## MA0001
 

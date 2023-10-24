@@ -1,5 +1,7 @@
-﻿; Shipped analyzer releases
+; Shipped analyzer releases
 ; https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md
+
+## Release 0.1.0.2
 
 ### New Rules
 
@@ -8,3 +10,21 @@ Rule ID | Category | Severity | Notes
 MA0001 | Memory | Warning | C# events can cause memory leaks in an NSObject subclass. Remove the event or add the [UnconditionalSuppressMessage("Memory", "MA0001")] attribute with a justification as to why the event will not leak.
 MA0002 | Memory | Warning | Reference type members can cause memory leaks in an NSObject subclass. Remove the member, store the value as a WeakReference, or add the [UnconditionalSuppressMessage("Memory", "MA0002")] attribute with a justification as to why the member will not leak.
 MA0003 | Memory | Warning | Subscribing to events with instance methods can cause memory leaks in an NSObject subclass. Remove the subscription or convert the method to a static method.
+
+## Release 0.1.0.4
+
+### Removed Rules
+
+Rule ID | Category | Severity | Notes
+--------|----------|----------|-------
+MA0001 | Memory | Warning | C# events can cause memory leaks in an NSObject subclass. Remove the event or add the [UnconditionalSuppressMessage("Memory", "MA0001")] attribute with a justification as to why the event will not leak.
+MA0002 | Memory | Warning | Reference type members can cause memory leaks in an NSObject subclass. Remove the member, store the value as a WeakReference, or add the [UnconditionalSuppressMessage("Memory", "MA0002")] attribute with a justification as to why the member will not leak.
+MA0003 | Memory | Warning | Subscribing to events with instance methods can cause memory leaks in an NSObject subclass. Remove the subscription or convert the method to a static method.
+
+### New Rules
+
+Rule ID | Category | Severity | Notes
+--------|----------|----------|-------
+MEM0001 | Memory | Warning | C# events can cause memory leaks in an NSObject subclass. Remove the event or add the [UnconditionalSuppressMessage("Memory", "MA0001")] attribute with a justification as to why the event will not leak.
+MEM0002 | Memory | Warning | Reference type members can cause memory leaks in an NSObject subclass. Remove the member, store the value as a WeakReference, or add the [UnconditionalSuppressMessage("Memory", "MA0002")] attribute with a justification as to why the member will not leak.
+MEM0003 | Memory | Warning | Subscribing to events with instance methods can cause memory leaks in an NSObject subclass. Remove the subscription or convert the method to a static method.

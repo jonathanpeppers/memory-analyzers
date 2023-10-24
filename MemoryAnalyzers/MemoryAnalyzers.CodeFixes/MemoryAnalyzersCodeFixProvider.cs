@@ -17,7 +17,7 @@ namespace MemoryAnalyzers
 	{
 		public sealed override ImmutableArray<string> FixableDiagnosticIds
 		{
-			get { return ImmutableArray.Create(MemoryAnalyzer.MA0001, MemoryAnalyzer.MA0002, MemoryAnalyzer.MA0003); }
+			get { return ImmutableArray.Create(MemoryAnalyzer.MEM0001, MemoryAnalyzer.MEM0002, MemoryAnalyzer.MEM0003); }
 		}
 
 		public sealed override FixAllProvider GetFixAllProvider()
@@ -37,7 +37,7 @@ namespace MemoryAnalyzers
 			if (parent is null)
 				return;
 
-			if (diagnostic.Id == MemoryAnalyzer.MA0001)
+			if (diagnostic.Id == MemoryAnalyzer.MEM0001)
 			{
 				var declaration = parent.AncestorsAndSelf().OfType<EventFieldDeclarationSyntax>().First();
 				context.RegisterCodeFix(
@@ -53,7 +53,7 @@ namespace MemoryAnalyzers
 						equivalenceKey: nameof(CodeFixResources.AddUnconditionalSuppressMessage)),
 					diagnostic);
 			}
-			else if (diagnostic.Id == MemoryAnalyzer.MA0002)
+			else if (diagnostic.Id == MemoryAnalyzer.MEM0002)
 			{
 				var declaration = parent.AncestorsAndSelf().OfType<MemberDeclarationSyntax>().First();
 				context.RegisterCodeFix(
@@ -75,7 +75,7 @@ namespace MemoryAnalyzers
 						equivalenceKey: nameof(CodeFixResources.MakeWeak)),
 					diagnostic);
 			}
-			else if (diagnostic.Id == MemoryAnalyzer.MA0003)
+			else if (diagnostic.Id == MemoryAnalyzer.MEM0003)
 			{
 				var declaration = parent.AncestorsAndSelf().OfType<AssignmentExpressionSyntax>().First();
 				if (declaration.Parent is null)

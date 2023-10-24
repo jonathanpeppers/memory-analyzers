@@ -14,6 +14,9 @@ namespace MemoryAnalyzers
 		public const string MA0001 = "MA0001";
 		public const string MA0002 = "MA0002";
 		public const string MA0003 = "MA0003";
+		public const string MEM0001 = "MEM0001";
+		public const string MEM0002 = "MEM0002";
+		public const string MEM0003 = "MEM0003";
 		const string Category = "Memory";
 
 		/// <summary>
@@ -43,7 +46,7 @@ namespace MemoryAnalyzers
 		};
 
 		static readonly DiagnosticDescriptor MA0001Rule = new(
-			MA0001,
+			MEM0001,
 			new LocalizableResourceString(nameof(Resources.MA0001Title),
 			Resources.ResourceManager, typeof(Resources)),
 			new LocalizableResourceString(nameof(Resources.MA0001MessageFormat),
@@ -55,7 +58,7 @@ namespace MemoryAnalyzers
 		);
 
 		static readonly DiagnosticDescriptor MA0002Rule = new(
-			MA0002,
+			MEM0002,
 			new LocalizableResourceString(nameof(Resources.MA0002Title),
 			Resources.ResourceManager, typeof(Resources)),
 			new LocalizableResourceString(nameof(Resources.MA0002MessageFormat),
@@ -67,7 +70,7 @@ namespace MemoryAnalyzers
 		);
 
 		static readonly DiagnosticDescriptor MA0003Rule = new(
-			MA0003,
+			MEM0003,
 			new LocalizableResourceString(nameof(Resources.MA0003Title),
 			Resources.ResourceManager, typeof(Resources)),
 			new LocalizableResourceString(nameof(Resources.MA0003MessageFormat),
@@ -101,7 +104,7 @@ namespace MemoryAnalyzers
 				return;
 			if (!IsNSObjectSubclass(symbol.ContainingType))
 				return;
-			if (HasUnconditionalSuppressMessage(symbol, MA0001))
+			if (HasUnconditionalSuppressMessage(symbol, MEM0001, MA0001))
 				return;
 			if (symbol.AddMethod is null)
 				return;
@@ -121,7 +124,7 @@ namespace MemoryAnalyzers
 		{
 			if (context.ContainingSymbol is not IFieldSymbol symbol || !IsNSObjectSubclass(symbol.ContainingType))
 				return;
-			if (HasUnconditionalSuppressMessage(symbol, MA0002))
+			if (HasUnconditionalSuppressMessage(symbol, MEM0002, MA0002))
 				return;
 			if (symbol.Type.IsValueType)
 				return;
@@ -147,7 +150,7 @@ namespace MemoryAnalyzers
 		{
 			if (context.ContainingSymbol is not IPropertySymbol symbol || !IsNSObjectSubclass(symbol.ContainingType))
 				return;
-			if (HasUnconditionalSuppressMessage(symbol, MA0002))
+			if (HasUnconditionalSuppressMessage(symbol, MEM0002, MA0002))
 				return;
 			if (symbol.Type.IsValueType)
 				return;
@@ -180,7 +183,7 @@ namespace MemoryAnalyzers
 			var rightInfo = context.SemanticModel.GetSymbolInfo(assignment.Right);
 			if (rightInfo.Symbol is not IMethodSymbol methodSymbol || methodSymbol.IsStatic)
 				return; // static methods are fine
-			if (HasUnconditionalSuppressMessage(methodSymbol, MA0003))
+			if (HasUnconditionalSuppressMessage(methodSymbol, MEM0003, MA0003))
 				return; // Method has [UnconditionalSuppressMessage]
 			if (!IsNSObjectSubclass(methodSymbol.ContainingType))
 				return; // If the method is on a non-NSObject subclass, it's fine
@@ -201,7 +204,7 @@ namespace MemoryAnalyzers
 			context.ReportDiagnostic(Diagnostic.Create(MA0003Rule, location, methodSymbol.Name));
 		}
 
-		static bool HasUnconditionalSuppressMessage(ISymbol symbol, string expectedCode)
+		static bool HasUnconditionalSuppressMessage(ISymbol symbol, string expectedCode1, string expectedCode2)
 		{
 			foreach (var attribute in symbol.GetAttributes())
 			{
@@ -215,12 +218,14 @@ namespace MemoryAnalyzers
 				var ctorArgs = attribute.ConstructorArguments;
 				if (ctorArgs.Length == 2)
 				{
-					return ctorArgs[1].Value as string == expectedCode;
+					var ctorValue = ctorArgs[1].Value as string;
+					return ctorValue == expectedCode1 || ctorValue == expectedCode2;
 				}
 
 				// This only has a single 2-argument constructor, but let's keep this logic in case it ever changes
 				var namedArgs = attribute.NamedArguments.FirstOrDefault(n => n.Key == "CheckId");
-				return namedArgs.Value.Value as string == expectedCode;
+				var namedValue = namedArgs.Value.Value as string;
+				return namedValue == expectedCode1 || namedValue == expectedCode2;
 			}
 			return false;
 		}

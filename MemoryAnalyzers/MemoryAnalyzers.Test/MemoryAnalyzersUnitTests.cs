@@ -38,8 +38,23 @@ namespace MemoryAnalyzers.Test
 				}
 			""";
 
-			var expected = VerifyCS.Diagnostic("MA0001").WithLocation(0).WithArguments("EventName");
+			var expected = VerifyCS.Diagnostic("MEM0001").WithLocation(0).WithArguments("EventName");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+		}
+
+		[TestMethod]
+		public async Task UnconditionalSuppressMessage_MEM0001()
+		{
+			var test = """
+				class Foo : NSObject
+				{
+					[UnconditionalSuppressMessage("Memory", "MEM0001")]
+					public event EventHandler {|#0:EventName|};
+				}
+			""";
+
+			// 0 warnings
+			await VerifyCS.VerifyAnalyzerAsync(test);
 		}
 
 		[TestMethod]
@@ -58,12 +73,12 @@ namespace MemoryAnalyzers.Test
 		}
 
 		[TestMethod]
-		public async Task UnconditionalSuppressMessage_MA0001_Justification()
+		public async Task UnconditionalSuppressMessage_MEM0001_Justification()
 		{
 			var test = """
 				class Foo : NSObject
 				{
-					[UnconditionalSuppressMessage("Memory", "MA0001", Justification = "I know what I'm doing! LOL?")]
+					[UnconditionalSuppressMessage("Memory", "MEM0001", Justification = "I know what I'm doing! LOL?")]
 					public event EventHandler {|#0:EventName|};
 				}
 			""";
@@ -83,7 +98,7 @@ namespace MemoryAnalyzers.Test
 				}
 			""";
 
-			var expected = VerifyCS.Diagnostic("MA0001").WithLocation(0).WithArguments("EventName");
+			var expected = VerifyCS.Diagnostic("MEM0001").WithLocation(0).WithArguments("EventName");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
 		}
 
@@ -132,7 +147,7 @@ namespace MemoryAnalyzers.Test
 				}
 			""";
 
-			var expected = VerifyCS.Diagnostic("MA0001").WithLocation(0).WithArguments("EventName");
+			var expected = VerifyCS.Diagnostic("MEM0001").WithLocation(0).WithArguments("EventName");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
 		}
 
@@ -148,7 +163,7 @@ namespace MemoryAnalyzers.Test
 				}
 			""";
 
-			var expected = VerifyCS.Diagnostic("MA0001").WithLocation(0).WithArguments("EventName");
+			var expected = VerifyCS.Diagnostic("MEM0001").WithLocation(0).WithArguments("EventName");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
 		}
 
@@ -162,7 +177,7 @@ namespace MemoryAnalyzers.Test
 				}
 			""";
 
-			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("FieldName");
+			var expected = VerifyCS.Diagnostic("MEM0002").WithLocation(0).WithArguments("FieldName");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
 		}
 
@@ -176,7 +191,7 @@ namespace MemoryAnalyzers.Test
 				}
 			""";
 
-			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("FieldName");
+			var expected = VerifyCS.Diagnostic("MEM0002").WithLocation(0).WithArguments("FieldName");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
 		}
 
@@ -190,7 +205,7 @@ namespace MemoryAnalyzers.Test
 				}
 			""";
 
-			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("FieldName");
+			var expected = VerifyCS.Diagnostic("MEM0002").WithLocation(0).WithArguments("FieldName");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
 		}
 
@@ -247,6 +262,20 @@ namespace MemoryAnalyzers.Test
 		}
 
 		[TestMethod]
+		public async Task UnconditionalSuppressMessage_MEM0002_Field()
+		{
+			var test = """
+				class MyViewSubclass : UIView
+				{
+					[UnconditionalSuppressMessage("Memory", "MEM0002")]
+					public UIView {|#0:FieldName|};
+				}
+			""";
+
+			await VerifyCS.VerifyAnalyzerAsync(test);
+		}
+
+		[TestMethod]
 		public async Task UnconditionalSuppressMessage_MA0002_Field()
 		{
 			var test = """
@@ -270,7 +299,7 @@ namespace MemoryAnalyzers.Test
 				}
 			""";
 
-			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("PropertyName");
+			var expected = VerifyCS.Diagnostic("MEM0002").WithLocation(0).WithArguments("PropertyName");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
 		}
 
@@ -284,7 +313,7 @@ namespace MemoryAnalyzers.Test
 				}
 			""";
 
-			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("PropertyName");
+			var expected = VerifyCS.Diagnostic("MEM0002").WithLocation(0).WithArguments("PropertyName");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
 		}
 
@@ -298,7 +327,7 @@ namespace MemoryAnalyzers.Test
 				}
 			""";
 
-			var expected = VerifyCS.Diagnostic("MA0002").WithLocation(0).WithArguments("PropertyName");
+			var expected = VerifyCS.Diagnostic("MEM0002").WithLocation(0).WithArguments("PropertyName");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
 		}
 
@@ -368,6 +397,20 @@ namespace MemoryAnalyzers.Test
 		}
 
 		[TestMethod]
+		public async Task UnconditionalSuppressMessage_MEM0002_Property()
+		{
+			var test = """
+				class MyViewSubclass : UIView
+				{
+					[UnconditionalSuppressMessage("Memory", "MEM0002")]
+					public UIView {|#0:PropertyName|} { get; set; }
+				}
+			""";
+
+			await VerifyCS.VerifyAnalyzerAsync(test);
+		}
+
+		[TestMethod]
 		public async Task UnconditionalSuppressMessage_MA0002_Property()
 		{
 			var test = """
@@ -388,7 +431,7 @@ namespace MemoryAnalyzers.Test
 				[Register(Name = "UITextField", IsWrapper = true)]
 				class UITextField
 				{
-					[UnconditionalSuppressMessage("Memory", "MA0001")]
+					[UnconditionalSuppressMessage("Memory", "MEM0001")]
 					public event EventHandler EditingDidBegin;
 				}
 
@@ -403,7 +446,7 @@ namespace MemoryAnalyzers.Test
 				}
 			""";
 
-			var expected = VerifyCS.Diagnostic("MA0003").WithLocation(0).WithArguments("OnEditingDidBegin");
+			var expected = VerifyCS.Diagnostic("MEM0003").WithLocation(0).WithArguments("OnEditingDidBegin");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
 		}
 
@@ -414,7 +457,7 @@ namespace MemoryAnalyzers.Test
 				[Register(Name = "UITextField", IsWrapper = true)]
 				class UITextField
 				{
-					[UnconditionalSuppressMessage("Memory", "MA0001")]
+					[UnconditionalSuppressMessage("Memory", "MEM0001")]
 					public event EventHandler EditingDidBegin;
 				}
 
@@ -430,7 +473,7 @@ namespace MemoryAnalyzers.Test
 				}
 			""";
 
-			var expected = VerifyCS.Diagnostic("MA0003").WithLocation(0).WithArguments("OnEditingDidBegin");
+			var expected = VerifyCS.Diagnostic("MEM0003").WithLocation(0).WithArguments("OnEditingDidBegin");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
 		}
 
@@ -441,19 +484,19 @@ namespace MemoryAnalyzers.Test
 				[Register(Name = "UITextField", IsWrapper = true)]
 				class UITextField
 				{
-					[UnconditionalSuppressMessage("Memory", "MA0001")]
+					[UnconditionalSuppressMessage("Memory", "MEM0001")]
 					public event EventHandler EditingDidBegin;
 				}
 
 				class MySubclass : UIView
 				{
-					[UnconditionalSuppressMessage("Memory", "MA0001")]
+					[UnconditionalSuppressMessage("Memory", "MEM0001")]
 					public event EventHandler InheritedEvent;
 				}
 
 				class MyView : MySubclass
 				{
-					[UnconditionalSuppressMessage("Memory", "MA0001")]
+					[UnconditionalSuppressMessage("Memory", "MEM0001")]
 					public event EventHandler MyOwnedEvent;
 
 					event EventHandler MyPrivateEvent;
@@ -486,7 +529,7 @@ namespace MemoryAnalyzers.Test
 				[Register("UIControl", true)]
 				class UIControl
 				{
-					[UnconditionalSuppressMessage("Memory", "MA0001")]
+					[UnconditionalSuppressMessage("Memory", "MEM0001")]
 					public event EventHandler ValueChanged;
 				}
 
@@ -516,7 +559,7 @@ namespace MemoryAnalyzers.Test
 				}
 			""";
 
-			var expected = VerifyCS.Diagnostic("MA0003").WithLocation(0).WithArguments("OnValueChanged");
+			var expected = VerifyCS.Diagnostic("MEM0003").WithLocation(0).WithArguments("OnValueChanged");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
 		}
 
@@ -530,7 +573,7 @@ namespace MemoryAnalyzers.Test
 				[Register(Name = "UITextField", IsWrapper = true)]
 				class UITextField
 				{
-					[UnconditionalSuppressMessage("Memory", "MA0001")]
+					[UnconditionalSuppressMessage("Memory", "MEM0001")]
 					public event EventHandler EditingDidBegin;
 				}
 
@@ -560,13 +603,13 @@ namespace MemoryAnalyzers.Test
 				[Register(Name = "UITextField", IsWrapper = true)]
 				class UITextField
 				{
-					[UnconditionalSuppressMessage("Memory", "MA0001")]
+					[UnconditionalSuppressMessage("Memory", "MEM0001")]
 					public event EventHandler EditingDidBegin;
 				}
 
 				class MyView : UIView
 				{
-					[UnconditionalSuppressMessage("Memory", "MA0002")]
+					[UnconditionalSuppressMessage("Memory", "MEM0002")]
 					readonly UITextFieldProxy _proxy = new();
 
 					public MyView()
@@ -582,7 +625,7 @@ namespace MemoryAnalyzers.Test
 				}
 			""";
 
-			var expected = VerifyCS.Diagnostic("MA0003").WithLocation(0).WithArguments("OnEditingDidBegin");
+			var expected = VerifyCS.Diagnostic("MEM0003").WithLocation(0).WithArguments("OnEditingDidBegin");
 			await VerifyCS.VerifyAnalyzerAsync(test, expected);
 		}
 
@@ -593,13 +636,13 @@ namespace MemoryAnalyzers.Test
 				[Register(Name = "UITextField", IsWrapper = true)]
 				class UITextField
 				{
-					[UnconditionalSuppressMessage("Memory", "MA0001")]
+					[UnconditionalSuppressMessage("Memory", "MEM0001")]
 					public event EventHandler EditingDidBegin;
 				}
 
 				class MyView : UIView
 				{
-					[UnconditionalSuppressMessage("Memory", "MA0002")]
+					[UnconditionalSuppressMessage("Memory", "MEM0002")]
 					readonly UITextFieldProxy _proxy = new();
 
 					public MyView()
@@ -611,7 +654,7 @@ namespace MemoryAnalyzers.Test
 					class UITextFieldProxy : NSObject
 					{
 						// But then we suppressed the warning
-						[UnconditionalSuppressMessage("Memory", "MA0003")]
+						[UnconditionalSuppressMessage("Memory", "MEM0003")]
 						public void OnEditingDidBegin(object sender, EventArgs e) { }
 					}
 				}

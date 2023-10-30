@@ -132,7 +132,7 @@ namespace MemoryAnalyzers
 			{
 				if (GenerallySafe.Contains((namedSymbol.ContainingNamespace.Name, namedSymbol.Name)))
 					return;
-				if (!IsObject(namedSymbol) && !IsDelegateType(namedSymbol) && !IsNSObjectSubclass(namedSymbol))
+				if (namedSymbol.TypeKind != TypeKind.Interface && !IsObject(namedSymbol) && !IsDelegateType(namedSymbol) && !IsNSObjectSubclass(namedSymbol))
 					return;
 				if (IsGenerallySafe(symbol.ContainingType, symbol.Type))
 					return;
@@ -158,7 +158,7 @@ namespace MemoryAnalyzers
 			{
 				if (GenerallySafe.Contains((namedSymbol.ContainingNamespace.Name, namedSymbol.Name)))
 					return;
-				if (!IsObject(namedSymbol) && !IsDelegateType(namedSymbol) && !IsNSObjectSubclass(namedSymbol))
+				if (namedSymbol.TypeKind != TypeKind.Interface && !IsObject(namedSymbol) && !IsDelegateType(namedSymbol) && !IsNSObjectSubclass(namedSymbol))
 					return;
 				if (IsGenerallySafe(symbol.ContainingType, symbol.Type))
 					return;

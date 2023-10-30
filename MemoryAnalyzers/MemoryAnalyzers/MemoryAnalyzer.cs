@@ -316,8 +316,7 @@ namespace MemoryAnalyzers
 		/// <summary>
 		/// Returns true if a type is exactly System.Object
 		/// </summary>
-		static bool IsObject(INamedTypeSymbol type) =>
-			type.ContainingNamespace.Name == "System" && type.Name == "Object";
+		static bool IsObject(INamedTypeSymbol type) => type.SpecialType == SpecialType.System_Object;
 
 		//Swiped from: https://www.meziantou.net/checking-if-a-property-is-an-auto-implemented-property-in-roslyn.htm
 		static bool IsAutoProperty(IPropertySymbol propertySymbol)

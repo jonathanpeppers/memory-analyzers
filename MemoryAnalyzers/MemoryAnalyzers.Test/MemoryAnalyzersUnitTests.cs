@@ -196,6 +196,22 @@ namespace MemoryAnalyzers.Test
 		}
 
 		[TestMethod]
+		public async Task FieldThatLeaks_Interface()
+		{
+			var test = """
+				interface IFoo { }
+
+				class MyViewSubclass : UIView
+				{
+					public IFoo {|#0:FieldName|};
+				}
+			""";
+
+			var expected = VerifyCS.Diagnostic("MEM0002").WithLocation(0).WithArguments("FieldName");
+			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+		}
+
+		[TestMethod]
 		public async Task FieldThatLeaks_Delegate()
 		{
 			var test = """
@@ -310,6 +326,22 @@ namespace MemoryAnalyzers.Test
 				class MyViewSubclass : UIView
 				{
 					public object {|#0:PropertyName|} { get; set; }
+				}
+			""";
+
+			var expected = VerifyCS.Diagnostic("MEM0002").WithLocation(0).WithArguments("PropertyName");
+			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+		}
+
+		[TestMethod]
+		public async Task PropertyThatLeaks_Interface()
+		{
+			var test = """
+				interface IFoo { }
+
+				class MyViewSubclass : UIView
+				{
+					public IFoo {|#0:PropertyName|} { get; set; }
 				}
 			""";
 
